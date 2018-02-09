@@ -4,7 +4,7 @@ export interface FOVOptions {
   topology: 4 | 6 | 8;
 }
 
-type LightPassesCallback = (x: number, y: number) => boolean;
+export type LightPassesCallback = (x: number, y: number) => boolean;
 
 export abstract class FOV {
   protected _lightPasses: LightPassesCallback;
@@ -40,9 +40,12 @@ export abstract class FOV {
    * @param r range
    */
   protected _getCircle(cx: number, cy: number, r: number): [number, number][] {
-    let dirs: [number, number][];
-    let countFactor: number;
-    let startOffset: [number, number];
+    // prettier-ignore
+    let dirs!: [number, number][];
+    // prettier-ignore
+    let countFactor!: number;
+    // prettier-ignore
+    let startOffset!: [number, number];
 
     switch (this._options.topology) {
       case 4:
@@ -61,7 +64,6 @@ export abstract class FOV {
         dirs = DIRS[4];
         countFactor = 2;
         startOffset = [-1, 1];
-        break;
     }
 
     const result: [number, number][] = [];
