@@ -1,6 +1,6 @@
 import { DIRS } from '../util'
 
-interface PathOptions {
+export interface PathOptions {
   topology: number
 }
 
@@ -8,13 +8,13 @@ interface PathOptions {
  * Abstract pathfinder
  */
 export abstract class Path {
-  private _toX: number
-  private _toY: number
-  private _fromX: number | null
-  private _fromY: number | null
-  private _passableCallback
-  private _options: PathOptions
-  private _dirs: [number, number][]
+  protected _toX: number
+  protected _toY: number
+  protected _fromX: number | null
+  protected _fromY: number | null
+  protected _passableCallback
+  protected _options: PathOptions
+  protected _dirs: [number, number][]
 
   /**
    * @param toX Target X coord
