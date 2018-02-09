@@ -6,6 +6,13 @@ export interface FOVOptions {
 
 export type LightPassesCallback = (x: number, y: number) => boolean;
 
+export type VisibilityCallback = (
+  x: number,
+  y: number,
+  r: number,
+  visibility: number
+) => void;
+
 export abstract class FOV {
   protected _lightPasses: LightPassesCallback;
   protected _options: FOVOptions;
@@ -31,7 +38,12 @@ export abstract class FOV {
    * @param R Maximum visibility radius
    * @param callback
    */
-  abstract compute(x: number, y: number, R: number, callback);
+  abstract compute(
+    x: number,
+    y: number,
+    R: number,
+    callback: VisibilityCallback
+  ): void;
 
   /**
    * Return all neighbors in a concentric ring
