@@ -5,5 +5,5 @@
  * @returns x modulo n
  */
 export function mod(x: number, n: number): number {
-  return ((x%n)+n)%n;
+  return (x % n + n) % n;
 }

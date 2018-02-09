@@ -1,20 +1,20 @@
-import { DIRS } from '../util'
+import { DIRS } from "../util";
 
 export interface PathOptions {
-  topology: 4 | 6 | 8
+  topology: 4 | 6 | 8;
 }
 
 /**
  * Abstract pathfinder
  */
 export abstract class Path {
-  protected _toX: number
-  protected _toY: number
-  protected _fromX: number | null
-  protected _fromY: number | null
-  protected _passableCallback
-  protected _options: PathOptions
-  protected _dirs: [number, number][]
+  protected _toX: number;
+  protected _toY: number;
+  protected _fromX: number | null;
+  protected _fromY: number | null;
+  protected _passableCallback;
+  protected _options: PathOptions;
+  protected _dirs: [number, number][];
 
   /**
    * @param toX Target X coord
@@ -23,7 +23,12 @@ export abstract class Path {
    * @param [options]
    * @param [options.topology=8]
    */
-  constructor(toX: number, toY: number, passableCallback, options?: Partial<PathOptions>) {
+  constructor(
+    toX: number,
+    toY: number,
+    passableCallback,
+    options?: Partial<PathOptions>
+  ) {
     this._toX = toX;
     this._toY = toY;
     this._fromX = null;
@@ -34,8 +39,9 @@ export abstract class Path {
       ...options
     };
 
-    this._dirs = DIRS[this._options.topology]
-    if (this._options.topology === 8) { /* reorder dirs for more aesthetic result (vertical/horizontal first) */
+    this._dirs = DIRS[this._options.topology];
+    if (this._options.topology === 8) {
+      /* reorder dirs for more aesthetic result (vertical/horizontal first) */
       this._dirs = [
         this._dirs[0],
         this._dirs[2],
@@ -45,9 +51,9 @@ export abstract class Path {
         this._dirs[3],
         this._dirs[5],
         this._dirs[7]
-      ]
+      ];
     }
-  };
+  }
 
   /**
    * Compute a path from a given point
@@ -55,7 +61,7 @@ export abstract class Path {
    * @param fromY
    * @param callback Will be called for every path item with arguments "x" and "y"
    */
-  protected abstract compute(fromX: number, fromY: number, callback)
+  protected abstract compute(fromX: number, fromY: number, callback);
 
   protected _getNeighbors(cx: number, cy: number): [number, number][] {
     const result: [number, number][] = [];
@@ -63,7 +69,9 @@ export abstract class Path {
       const x = cx + dir[0];
       const y = cy + dir[1];
 
-      if (!this._passableCallback(x, y)) { continue; }
+      if (!this._passableCallback(x, y)) {
+        continue;
+      }
       result.push([x, y]);
     }
 

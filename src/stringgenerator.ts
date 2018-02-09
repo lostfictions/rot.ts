@@ -1,10 +1,10 @@
-import { defaultRNG } from './rng'
+import { defaultRNG } from "./rng";
 
 export interface StringGeneratorOptions {
   /** Use word mode? */
-  words: boolean
-  order: number
-  prior: number
+  words: boolean;
+  order: number;
+  prior: number;
 }
 
 /**
@@ -15,12 +15,12 @@ export interface StringGeneratorOptions {
  * Offers configurable order and prior.
  */
 export class StringGenerator {
-  private readonly options: StringGeneratorOptions
-  private readonly boundary = String.fromCharCode(0)
-  private readonly suffix = this.boundary
-  private readonly prefix: string[] = []
-  private priorValues: { [val: string]: number } = {}
-  private data = {}
+  private readonly options: StringGeneratorOptions;
+  private readonly boundary = String.fromCharCode(0);
+  private readonly suffix = this.boundary;
+  private readonly prefix: string[] = [];
+  private priorValues: { [val: string]: number } = {};
+  private data = {};
 
   constructor(options?: Partial<StringGeneratorOptions>) {
     this.options = {
@@ -28,50 +28,52 @@ export class StringGenerator {
       order: 3,
       prior: 0.001,
       ...options
-    }
+    };
 
     for (let i = 0; i < this.options.order; i++) {
-      this.prefix.push(this.boundary)
+      this.prefix.push(this.boundary);
     }
 
-    this.priorValues[this.boundary] = this.options.prior
+    this.priorValues[this.boundary] = this.options.prior;
   }
 
   /**
    * Remove all learning data
    */
   clear(): void {
-    this.data = {}
-    this.priorValues = {}
+    this.data = {};
+    this.priorValues = {};
   }
 
   /**
    * @returns Generated string
    */
   generate(): string {
-    const result = [this.sample(this.prefix)]
+    const result = [this.sample(this.prefix)];
     while (result[result.length - 1] !== this.boundary) {
-      result.push(this.sample(result))
+      result.push(this.sample(result));
     }
-    return this.join(result.slice(0, -1))
+    return this.join(result.slice(0, -1));
   }
 
   /**
    * Observe (learn) a string from a training set
    */
   observe(str: string): void {
-    let tokens = this.split(str)
+    let tokens = this.split(str);
 
-    for(const token of tokens) {
-      this.priorValues[token] = this.options.prior
+    for (const token of tokens) {
+      this.priorValues[token] = this.options.prior;
     }
 
-    tokens = this.prefix.concat(tokens).concat(this.suffix) /* add boundary symbols */
+    tokens = this.prefix
+      .concat(tokens)
+      .concat(this.suffix); /* add boundary symbols */
 
-    for (var i=this.options.order; i<tokens.length; i++) {
-      var context = tokens.slice(i-this.options.order, i);
+    for (var i = this.options.order; i < tokens.length; i++) {
+      var context = tokens.slice(i - this.options.order, i);
       var event = tokens[i];
-      for (var j=0; j<context.length; j++) {
+      for (var j = 0; j < context.length; j++) {
         var subcontext = context.slice(j);
         this.observeEvent(subcontext, event);
       }
@@ -82,7 +84,9 @@ export class StringGenerator {
     var parts = [];
 
     var priorCount = 0;
-    for (var p in this.priorValues) { priorCount++; }
+    for (var p in this.priorValues) {
+      priorCount++;
+    }
     priorCount--; /* boundary */
     parts.push("distinct samples: " + priorCount);
 
@@ -97,11 +101,11 @@ export class StringGenerator {
     parts.push("dictionary size (contexts): " + dataCount);
     parts.push("dictionary size (events): " + eventCount);
 
-    return parts.join(", ")
+    return parts.join(", ");
   }
 
   private split(str: string): string[] {
-    return str.split(this.options.words ? /\s+/ : '')
+    return str.split(this.options.words ? /\s+/ : "");
   }
 
   private join(arr: string[]): string {
@@ -110,10 +114,14 @@ export class StringGenerator {
 
   private observeEvent(context: string[], event: string): void {
     var key = this.join(context);
-    if (!(key in this.data)) { this.data[key] = {}; }
+    if (!(key in this.data)) {
+      this.data[key] = {};
+    }
     var data = this.data[key];
 
-    if (!(event in data)) { data[event] = 0; }
+    if (!(event in data)) {
+      data[event] = 0;
+    }
     data[event]++;
   }
 
@@ -122,26 +130,34 @@ export class StringGenerator {
     var key = this.join(context);
     var data = this.data[key];
 
-    const available = {}
+    const available = {};
 
     if (this.options.prior) {
-      for (var event in this.priorValues) { available[event] = this.priorValues[event]; }
-      for (var event in data) { available[event] += data[event]; }
+      for (var event in this.priorValues) {
+        available[event] = this.priorValues[event];
+      }
+      for (var event in data) {
+        available[event] += data[event];
+      }
     } else {
-      available = data
+      available = data;
     }
 
-    return defaultRNG.getWeightedValue(available)
+    return defaultRNG.getWeightedValue(available);
   }
 
   private backoff(context: string[]): string[] {
     if (context.length > this.options.order) {
       context = context.slice(-this.options.order);
     } else if (context.length < this.options.order) {
-      context = this.prefix.slice(0, this.options.order - context.length).concat(context);
+      context = this.prefix
+        .slice(0, this.options.order - context.length)
+        .concat(context);
     }
 
-    while (!(this.join(context) in this.data) && context.length > 0) { context = context.slice(1); }
+    while (!(this.join(context) in this.data) && context.length > 0) {
+      context = context.slice(1);
+    }
 
     return context;
   }

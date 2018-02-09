@@ -1,44 +1,24 @@
-
 /**
  * Is rot.js supported by this browser?
  */
 export function isSupported(): boolean {
-  return !!(document.createElement('canvas').getContext && Function.prototype.bind)
+  return !!(
+    document.createElement("canvas").getContext && Function.prototype.bind
+  );
 }
 
 /** Default with for display and map generators */
-export const DEFAULT_WIDTH = 80
+export const DEFAULT_WIDTH = 80;
 
 /** Default height for display and map generators */
-export const DEFAULT_HEIGHT = 25
+export const DEFAULT_HEIGHT = 25;
 
 /** Directional constants. Ordering is important! */
 export const DIRS: { readonly [dir: number]: [number, number][] } = {
-  4: [
-    [ 0, -1],
-    [ 1,  0],
-    [ 0,  1],
-    [-1,  0]
-  ],
-  8: [
-    [ 0, -1],
-    [ 1, -1],
-    [ 1,  0],
-    [ 1,  1],
-    [ 0,  1],
-    [-1,  1],
-    [-1,  0],
-    [-1, -1]
-  ],
-  6: [
-    [-1, -1],
-    [ 1, -1],
-    [ 2,  0],
-    [ 1,  1],
-    [-1,  1],
-    [-2,  0]
-  ]
-}
+  4: [[0, -1], [1, 0], [0, 1], [-1, 0]],
+  8: [[0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1]],
+  6: [[-1, -1], [1, -1], [2, 0], [1, 1], [-1, 1], [-2, 0]]
+};
 
 export const KEYS: { readonly [keyname: string]: number } = {
   /** Cancel key. */
@@ -349,4 +329,4 @@ export const KEYS: { readonly [keyname: string]: number } = {
   VK_EXECUTE: 43,
   /** Linux support for this keycode was added in Gecko 4.0.	 */
   VK_SLEEP: 95
-}
+};

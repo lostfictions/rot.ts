@@ -1,18 +1,18 @@
-import { DisplayBackend } from './backend'
-import { mod } from '../util/number'
+import { DisplayBackend } from "./backend";
+import { mod } from "../util/number";
 
 export interface HexBackendOptions {
-  transpose: boolean
-  width: number
-  height: number
-  fontFamily: string
-  fontSize: number
-  border: number
-  spacing: number
+  transpose: boolean;
+  width: number;
+  height: number;
+  fontFamily: string;
+  fontSize: number;
+  border: number;
+  spacing: number;
 }
 
 export class HexBackend implements DisplayBackend {
-  protected _context
+  protected _context;
 
   protected _spacingX = 0;
   protected _spacingY = 0;
@@ -20,7 +20,7 @@ export class HexBackend implements DisplayBackend {
   protected _options: HexBackendOptions;
 
   constructor(context) {
-    this._context = context
+    this._context = context;
   }
 
   compute(options: HexBackendOptions): void {
@@ -28,7 +28,9 @@ export class HexBackend implements DisplayBackend {
 
     /* FIXME char size computation does not respect transposed hexes */
     var charWidth = Math.ceil(this._context.measureText("W").width);
-    this._hexSize = Math.floor(options.spacing * (options.fontSize + charWidth/Math.sqrt(3)) / 2);
+    this._hexSize = Math.floor(
+      options.spacing * (options.fontSize + charWidth / Math.sqrt(3)) / 2
+    );
     this._spacingX = this._hexSize * Math.sqrt(3) / 2;
     this._spacingY = this._hexSize * 1.5;
 
@@ -39,8 +41,12 @@ export class HexBackend implements DisplayBackend {
       var xprop = "width";
       var yprop = "height";
     }
-    this._context.canvas[xprop] = Math.ceil( (options.width + 1) * this._spacingX );
-    this._context.canvas[yprop] = Math.ceil( (options.height - 1) * this._spacingY + 2*this._hexSize );
+    this._context.canvas[xprop] = Math.ceil(
+      (options.width + 1) * this._spacingX
+    );
+    this._context.canvas[yprop] = Math.ceil(
+      (options.height - 1) * this._spacingY + 2 * this._hexSize
+    );
   }
 
   draw(data, clearBefore: boolean): void {
@@ -50,23 +56,24 @@ export class HexBackend implements DisplayBackend {
     var fg = data[3];
     var bg = data[4];
 
-    var px = [
-      (x+1) * this._spacingX,
-      y * this._spacingY + this._hexSize
-    ];
-    if (this._options.transpose) { px.reverse(); }
+    var px = [(x + 1) * this._spacingX, y * this._spacingY + this._hexSize];
+    if (this._options.transpose) {
+      px.reverse();
+    }
 
     if (clearBefore) {
       this._context.fillStyle = bg;
       this._fill(px[0], px[1]);
     }
 
-    if (!ch) { return; }
+    if (!ch) {
+      return;
+    }
 
     this._context.fillStyle = fg;
 
     var chars = [].concat(ch);
-    for (var i=0;i<chars.length;i++) {
+    for (var i = 0; i < chars.length; i++) {
       this._context.fillText(chars[i], px[0], Math.ceil(px[1]));
     }
   }
@@ -79,7 +86,9 @@ export class HexBackend implements DisplayBackend {
     }
 
     var width = Math.floor(availWidth / this._spacingX) - 1;
-    var height = Math.floor((availHeight - 2*this._hexSize) / this._spacingY + 1);
+    var height = Math.floor(
+      (availHeight - 2 * this._hexSize) / this._spacingY + 1
+    );
     return [width, height];
   }
 
@@ -90,8 +99,9 @@ export class HexBackend implements DisplayBackend {
       availWidth -= availHeight;
     }
 
-    var hexSizeWidth = 2*availWidth / ((this._options.width+1) * Math.sqrt(3)) - 1;
-    var hexSizeHeight = availHeight / (2 + 1.5*(this._options.height-1));
+    var hexSizeWidth =
+      2 * availWidth / ((this._options.width + 1) * Math.sqrt(3)) - 1;
+    var hexSizeHeight = availHeight / (2 + 1.5 * (this._options.height - 1));
     var hexSize = Math.min(hexSizeWidth, hexSizeHeight);
 
     /* compute char ratio */
@@ -101,32 +111,34 @@ export class HexBackend implements DisplayBackend {
     this._context.font = oldFont;
     var ratio = width / 100;
 
-    hexSize = Math.floor(hexSize)+1; /* closest larger hexSize */
+    hexSize = Math.floor(hexSize) + 1; /* closest larger hexSize */
 
     /* FIXME char size computation does not respect transposed hexes */
-    var fontSize = 2*hexSize / (this._options.spacing * (1 + ratio / Math.sqrt(3)));
+    var fontSize =
+      2 * hexSize / (this._options.spacing * (1 + ratio / Math.sqrt(3)));
 
     /* closest smaller fontSize */
-    return Math.ceil(fontSize)-1;
+    return Math.ceil(fontSize) - 1;
   }
 
   eventToPosition(x: number, y: number): [number, number] {
     if (this._options.transpose) {
       x += y;
-      y = x-y;
+      y = x - y;
       x -= y;
       var nodeSize = this._context.canvas.width;
     } else {
       var nodeSize = this._context.canvas.height;
     }
     var size = nodeSize / this._options.height;
-    y = Math.floor(y/size);
+    y = Math.floor(y / size);
 
-    if(mod(y, 2)) { /* odd row */
+    if (mod(y, 2)) {
+      /* odd row */
       x -= this._spacingX;
-      x = 1 + 2*Math.floor(x/(2*this._spacingX));
+      x = 1 + 2 * Math.floor(x / (2 * this._spacingX));
     } else {
-      x = 2*Math.floor(x/(2*this._spacingX));
+      x = 2 * Math.floor(x / (2 * this._spacingX));
     }
 
     return [x, y];
@@ -143,21 +155,21 @@ export class HexBackend implements DisplayBackend {
     this._context.beginPath();
 
     if (this._options.transpose) {
-      this._context.moveTo(cx-a+b,	cy);
-      this._context.lineTo(cx-a/2+b,	cy+this._spacingX-b);
-      this._context.lineTo(cx+a/2-b,	cy+this._spacingX-b);
-      this._context.lineTo(cx+a-b,	cy);
-      this._context.lineTo(cx+a/2-b,	cy-this._spacingX+b);
-      this._context.lineTo(cx-a/2+b,	cy-this._spacingX+b);
-      this._context.lineTo(cx-a+b,	cy);
+      this._context.moveTo(cx - a + b, cy);
+      this._context.lineTo(cx - a / 2 + b, cy + this._spacingX - b);
+      this._context.lineTo(cx + a / 2 - b, cy + this._spacingX - b);
+      this._context.lineTo(cx + a - b, cy);
+      this._context.lineTo(cx + a / 2 - b, cy - this._spacingX + b);
+      this._context.lineTo(cx - a / 2 + b, cy - this._spacingX + b);
+      this._context.lineTo(cx - a + b, cy);
     } else {
-      this._context.moveTo(cx,					cy-a+b);
-      this._context.lineTo(cx+this._spacingX-b,	cy-a/2+b);
-      this._context.lineTo(cx+this._spacingX-b,	cy+a/2-b);
-      this._context.lineTo(cx,					cy+a-b);
-      this._context.lineTo(cx-this._spacingX+b,	cy+a/2-b);
-      this._context.lineTo(cx-this._spacingX+b,	cy-a/2+b);
-      this._context.lineTo(cx,					cy-a+b);
+      this._context.moveTo(cx, cy - a + b);
+      this._context.lineTo(cx + this._spacingX - b, cy - a / 2 + b);
+      this._context.lineTo(cx + this._spacingX - b, cy + a / 2 - b);
+      this._context.lineTo(cx, cy + a - b);
+      this._context.lineTo(cx - this._spacingX + b, cy + a / 2 - b);
+      this._context.lineTo(cx - this._spacingX + b, cy - a / 2 + b);
+      this._context.lineTo(cx, cy - a + b);
     }
     this._context.fill();
   }

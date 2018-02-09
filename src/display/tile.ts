@@ -1,9 +1,9 @@
-import { DisplayBackend } from './backend'
-import { RectBackend } from './rect'
+import { DisplayBackend } from "./backend";
+import { RectBackend } from "./rect";
 
 export class TileBackend extends RectBackend implements DisplayBackend {
   protected _options = {};
-  protected _colorCanvas = document.createElement("canvas")
+  protected _colorCanvas = document.createElement("canvas");
 
   constructor(context) {
     super(context);
@@ -29,29 +29,50 @@ export class TileBackend extends RectBackend implements DisplayBackend {
 
     if (clearBefore) {
       if (this._options.tileColorize) {
-        this._context.clearRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+        this._context.clearRect(
+          x * tileWidth,
+          y * tileHeight,
+          tileWidth,
+          tileHeight
+        );
       } else {
         this._context.fillStyle = bg;
-        this._context.fillRect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+        this._context.fillRect(
+          x * tileWidth,
+          y * tileHeight,
+          tileWidth,
+          tileHeight
+        );
       }
     }
 
-    if (!ch) { return; }
+    if (!ch) {
+      return;
+    }
 
     var chars = [].concat(ch);
-    for (var i=0;i<chars.length;i++) {
+    for (var i = 0; i < chars.length; i++) {
       var tile = this._options.tileMap[chars[i]];
-      if (!tile) { throw new Error("Char '" + chars[i] + "' not found in tileMap"); }
+      if (!tile) {
+        throw new Error("Char '" + chars[i] + "' not found in tileMap");
+      }
 
-      if (this._options.tileColorize) { /* apply colorization */
+      if (this._options.tileColorize) {
+        /* apply colorization */
         var canvas = this._colorCanvas;
         var context = canvas.getContext("2d");
         context.clearRect(0, 0, tileWidth, tileHeight);
 
         context.drawImage(
           this._options.tileSet,
-          tile[0], tile[1], tileWidth, tileHeight,
-          0, 0, tileWidth, tileHeight
+          tile[0],
+          tile[1],
+          tileWidth,
+          tileHeight,
+          0,
+          0,
+          tileWidth,
+          tileHeight
         );
 
         if (fg != "transparent") {
@@ -66,13 +87,25 @@ export class TileBackend extends RectBackend implements DisplayBackend {
           context.fillRect(0, 0, tileWidth, tileHeight);
         }
 
-        this._context.drawImage(canvas, x*tileWidth, y*tileHeight, tileWidth, tileHeight);
-
-      } else { /* no colorizing, easy */
+        this._context.drawImage(
+          canvas,
+          x * tileWidth,
+          y * tileHeight,
+          tileWidth,
+          tileHeight
+        );
+      } else {
+        /* no colorizing, easy */
         this._context.drawImage(
           this._options.tileSet,
-          tile[0], tile[1], tileWidth, tileHeight,
-          x*tileWidth, y*tileHeight, tileWidth, tileHeight
+          tile[0],
+          tile[1],
+          tileWidth,
+          tileHeight,
+          x * tileWidth,
+          y * tileHeight,
+          tileWidth,
+          tileHeight
         );
       }
     }
@@ -91,7 +124,9 @@ export class TileBackend extends RectBackend implements DisplayBackend {
   }
 
   eventToPosition(x: number, y: number): [number, number] {
-    return [Math.floor(x/this._options.tileWidth), Math.floor(y/this._options.tileHeight)];
+    return [
+      Math.floor(x / this._options.tileWidth),
+      Math.floor(y / this._options.tileHeight)
+    ];
   }
 }
-

@@ -7,9 +7,9 @@
  * Better rank ordering method by Stefan Gustavson in 2012.
  */
 
-import { Noise } from './noise'
-import { randomize } from '../util/array'
-import { mod } from '../util/number'
+import { Noise } from "./noise";
+import { randomize } from "../util/array";
+import { mod } from "../util/number";
 
 /**
  * 2D simplex noise generator
@@ -27,7 +27,7 @@ export class Simplex implements Noise {
     [-1, 1],
     [-1, 0],
     [-1, -1]
-  ]
+  ];
 
   private _perms: number[] = [];
   private _indexes: number[] = [];
@@ -37,10 +37,12 @@ export class Simplex implements Noise {
    */
   constructor(gradients = 256) {
     let permutations: number[] = [];
-    for (let i=0;i<gradients;i++) { permutations.push(i); }
+    for (let i = 0; i < gradients; i++) {
+      permutations.push(i);
+    }
     permutations = randomize(permutations);
 
-    for (let i=0;i<2*gradients;i++) {
+    for (let i = 0; i < 2 * gradients; i++) {
       this._perms.push(permutations[i % gradients]);
       this._indexes.push(this._perms[i] % this._gradients.length);
     }
@@ -49,10 +51,13 @@ export class Simplex implements Noise {
   get(xin: number, yin: number): number {
     var perms = this._perms;
     var indexes = this._indexes;
-    var count = perms.length/2;
+    var count = perms.length / 2;
     var G2 = this._G2;
 
-    var n0 =0, n1 = 0, n2 = 0, gi; // Noise contributions from the three corners
+    var n0 = 0,
+      n1 = 0,
+      n2 = 0,
+      gi; // Noise contributions from the three corners
 
     // Skew the input space to determine which simplex cell we're in
     var s = (xin + yin) * this._F2; // Hairy factor for 2D
@@ -70,7 +75,8 @@ export class Simplex implements Noise {
     if (x0 > y0) {
       i1 = 1;
       j1 = 0;
-    } else { // lower triangle, XY order: (0,0)->(1,0)->(1,1)
+    } else {
+      // lower triangle, XY order: (0,0)->(1,0)->(1,1)
       i1 = 0;
       j1 = 1;
     } // upper triangle, YX order: (0,0)->(0,1)->(1,1)
@@ -80,34 +86,34 @@ export class Simplex implements Noise {
     // c = (3-sqrt(3))/6
     var x1 = x0 - i1 + G2; // Offsets for middle corner in (x,y) unskewed coords
     var y1 = y0 - j1 + G2;
-    var x2 = x0 - 1 + 2*G2; // Offsets for last corner in (x,y) unskewed coords
-    var y2 = y0 - 1 + 2*G2;
+    var x2 = x0 - 1 + 2 * G2; // Offsets for last corner in (x,y) unskewed coords
+    var y2 = y0 - 1 + 2 * G2;
 
     // Work out the hashed gradient indices of the three simplex corners
     var ii = mod(i, count);
     var jj = mod(j, count);
 
     // Calculate the contribution from the three corners
-    var t0 = 0.5 - x0*x0 - y0*y0;
+    var t0 = 0.5 - x0 * x0 - y0 * y0;
     if (t0 >= 0) {
       t0 *= t0;
-      gi = indexes[ii+perms[jj]];
+      gi = indexes[ii + perms[jj]];
       var grad = this._gradients[gi];
       n0 = t0 * t0 * (grad[0] * x0 + grad[1] * y0);
     }
 
-    var t1 = 0.5 - x1*x1 - y1*y1;
+    var t1 = 0.5 - x1 * x1 - y1 * y1;
     if (t1 >= 0) {
       t1 *= t1;
-      gi = indexes[ii+i1+perms[jj+j1]];
+      gi = indexes[ii + i1 + perms[jj + j1]];
       var grad = this._gradients[gi];
       n1 = t1 * t1 * (grad[0] * x1 + grad[1] * y1);
     }
 
-    var t2 = 0.5 - x2*x2 - y2*y2;
+    var t2 = 0.5 - x2 * x2 - y2 * y2;
     if (t2 >= 0) {
       t2 *= t2;
-      gi = indexes[ii+1+perms[jj+1]];
+      gi = indexes[ii + 1 + perms[jj + 1]];
       var grad = this._gradients[gi];
       n2 = t2 * t2 * (grad[0] * x2 + grad[1] * y2);
     }
