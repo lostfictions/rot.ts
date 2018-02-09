@@ -1,3 +1,5 @@
+import { defaultRNG } from './rng'
+
 /**
  * Color operations
  */
@@ -136,10 +138,10 @@ export const Color = {
    * @returns {number[]}
    */
   randomize: function(color, diff) {
-    if (!(diff instanceof Array)) { diff = Math.round(ROT.RNG.getNormal(0, diff)); }
+    if (!(diff instanceof Array)) { diff = Math.round(defaultRNG.getNormal(0, diff)); }
     var result = color.slice();
     for (var i=0;i<3;i++) {
-      result[i] += (diff instanceof Array ? Math.round(ROT.RNG.getNormal(0, diff[i])) : diff);
+      result[i] += (diff instanceof Array ? Math.round(defaultRNG.getNormal(0, diff[i])) : diff);
     }
     return result;
   },

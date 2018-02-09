@@ -1,10 +1,14 @@
 import { Scheduler } from './scheduler/scheduler'
 
+export interface Actor {
+  act(): { then?: (onResolve: () => any) => any } | void
+}
+
 export class Engine {
-  private readonly scheduler: Scheduler
+  private readonly scheduler: Scheduler<Actor>
   private _lock = 1
 
-  constructor(scheduler: Scheduler) {
+  constructor(scheduler: Scheduler<Actor>) {
     this.scheduler = scheduler
   }
 

@@ -1,9 +1,9 @@
 /**
  * Generic event queue: stores events and retrieves them based on their time
  */
-export class EventQueue {
+export class EventQueue<T = any> {
   private _time = 0;
-  private _events = [];
+  private _events: T[] = [];
   private _eventTimes: number[] = [];
 
   /**
@@ -22,7 +22,7 @@ export class EventQueue {
     return this;
   }
 
-  add(event, time: number): void {
+  add(event: T, time: number): void {
     var index = this._events.length;
     for (var i=0;i<this._eventTimes.length;i++) {
       if (this._eventTimes[i] > time) {
@@ -39,7 +39,7 @@ export class EventQueue {
    * Locates the nearest event, advances time if necessary. Returns that event and removes it from the queue.
    * @returns The event previously added by addEvent, null if no event available
    */
-  get(): object | null {
+  get(): T | null {
     if (!this._events.length) { return null; }
 
     const time = this._eventTimes.splice(0, 1)[0]
@@ -54,9 +54,9 @@ export class EventQueue {
   /**
    * Get the time associated with the given event
    */
-  getEventTime(event): number {
+  getEventTime(event: T): number | null {
     var index = this._events.indexOf(event);
-    if (index == -1) { return undefined }
+    if (index == -1) { return null }
     return this._eventTimes[index];
   }
 
@@ -64,9 +64,9 @@ export class EventQueue {
    * Remove an event from the queue
    * @returns success?
    */
-  remove(event): boolean {
+  remove(event: T): boolean {
     var index = this._events.indexOf(event);
-    if (index == -1) { return false }
+    if (index === -1) { return false }
     this._remove(index);
     return true;
   }
@@ -74,7 +74,7 @@ export class EventQueue {
   /**
    * Remove an event from the queue
    */
-  _remove(index: number): void {
+  protected _remove(index: number): void {
     this._events.splice(index, 1);
     this._eventTimes.splice(index, 1);
   }

@@ -1,15 +1,15 @@
 import { EventQueue } from '../eventqueue'
 
-export abstract class Scheduler {
-  protected _queue = new EventQueue()
-  protected _repeat = []
-  protected _current = null
+export abstract class Scheduler<T = any> {
+  protected _queue = new EventQueue<T>()
+  protected _repeat: T[] = []
+  protected _current: T | null = null
 
   getTime(): number {
     return this._queue.getTime()
   }
 
-  add(item, repeat: boolean): this {
+  add(item: T, repeat: boolean): this {
     if (repeat) { this._repeat.push(item) }
     return this
   }
@@ -17,7 +17,7 @@ export abstract class Scheduler {
   /**
    * Get the time the given item is scheduled for
    */
-  getTimeOf(item): number {
+  getTimeOf(item: T): number | null {
     return this._queue.getEventTime(item)
   }
 
@@ -34,7 +34,7 @@ export abstract class Scheduler {
   /**
    * Remove a previously added item
    */
-  remove(item): boolean {
+  remove(item: T): boolean {
     const result = this._queue.remove(item)
 
     const index = this._repeat.indexOf(item)
@@ -48,7 +48,7 @@ export abstract class Scheduler {
   /**
    * Schedule next item
    */
-  next() {
+  next(): T | null {
     this._current = this._queue.get()
     return this._current
   }
