@@ -1,0 +1,33 @@
+{
+  "name": "rot.ts",
+  "version": "0.0.1",
+  "description": "A modernized, maintainable version of [rot.js](https://github.com/ondras/rot.js).",
+  "main": "dist/index.js",
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lostfictions/rot.ts.git"
+  },
+  "keywords": [
+    "roguelike",
+    "game",
+    "gamedev"
+  ],
+  "author": "s <https://github.com/lostfictions>",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/lostfictions/rot.ts/issues"
+  },
+  "homepage": "https://github.com/lostfictions/rot.ts#readme",
+  "devDependencies": {
+    "prettier": "1.10.2",
+    "tslint": "^5.9.1",
+    "typescript": "^2.7.1"
+  }
+}
