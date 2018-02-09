@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "outDir": "dist",
+    "strict": true,
+    "sourceMap": true,
+    "rootDirs": ["./src"],
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "declaration": true,
+    "checkJs": true,
+    "allowJs": true
+    // "allowSyntheticDefaultImports": true,
+	},
+  "include": [
+    "./src/**/*"
+  ]
+}
