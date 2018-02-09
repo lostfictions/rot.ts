@@ -13,10 +13,6 @@ export interface StringGeneratorOptions {
  * Copied from a [RogueBasin article](http://www.roguebasin.roguelikedevelopment.org/index.php?title=Names_from_a_high_order_Markov_Process_and_a_simplified_Katz_back-off_scheme).
  *
  * Offers configurable order and prior.
- * @param {object} [options]
- * @param {bool} [options.words=false] Use word mode?
- * @param {int} [options.order=3]
- * @param {float} [options.prior=0.001]
  */
 export class StringGenerator {
   private readonly options: StringGeneratorOptions

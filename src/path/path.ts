@@ -1,7 +1,7 @@
 import { DIRS } from '../util'
 
 export interface PathOptions {
-  topology: number
+  topology: 4 | 6 | 8
 }
 
 /**
