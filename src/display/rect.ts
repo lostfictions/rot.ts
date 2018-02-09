@@ -1,33 +1,25 @@
 import { DisplayBackend } from "./backend";
-
-export interface RectBackendOptions {
-  forceSquareRatio: boolean;
-  spacing: number;
-  fontSize: number;
-  width: number;
-  height: number;
-  border: number;
-  fontFamily: string;
-}
+import { DrawData } from "./draw-data";
+import { DisplayOptions } from "./display-options";
 
 export class RectBackend implements DisplayBackend {
-  protected _context;
+  static cache = false;
+
+  protected _context: CanvasRenderingContext2D;
   protected _spacingX = 0;
   protected _spacingY = 0;
   protected _canvasCache = {};
-  protected _options: RectBackendOptions;
+  protected _options: DisplayOptions;
 
-  static cache = false;
-
-  constructor(context) {
+  constructor(context: CanvasRenderingContext2D) {
     this._context = context;
   }
 
-  compute(options: RectBackendOptions): void {
+  compute(options: DisplayOptions): void {
     this._canvasCache = {};
     this._options = options;
 
-    var charWidth = Math.ceil(this._context.measureText("W").width);
+    const charWidth = Math.ceil(this._context.measureText("W").width);
     this._spacingX = Math.ceil(options.spacing * charWidth);
     this._spacingY = Math.ceil(options.spacing * options.fontSize);
 
@@ -42,7 +34,7 @@ export class RectBackend implements DisplayBackend {
     this._context.canvas.height = options.height * this._spacingY;
   }
 
-  draw(data, clearBefore: boolean): void {
+  draw(data: DrawData, clearBefore: boolean): void {
     if (RectBackend.cache) {
       this._drawWithCache(data, clearBefore);
     } else {
@@ -51,9 +43,10 @@ export class RectBackend implements DisplayBackend {
   }
 
   computeSize(availWidth: number, availHeight: number): [number, number] {
-    var width = Math.floor(availWidth / this._spacingX);
-    var height = Math.floor(availHeight / this._spacingY);
-    return [width, height];
+    return [
+      Math.floor(availWidth / this._spacingX),
+      Math.floor(availHeight / this._spacingY)
+    ];
   }
 
   computeFontSize(availWidth: number, availHeight: number): number {
@@ -79,14 +72,10 @@ export class RectBackend implements DisplayBackend {
     return [Math.floor(x / this._spacingX), Math.floor(y / this._spacingY)];
   }
 
-  protected _drawWithCache(data, clearBefore: boolean): void {
-    var x = data[0];
-    var y = data[1];
-    var ch = data[2];
-    var fg = data[3];
-    var bg = data[4];
+  protected _drawWithCache(data: DrawData, _clearBefore: boolean): void {
+    const [x, y, ch, fg, bg] = data;
 
-    var hash = "" + ch + fg + bg;
+    const hash = "" + ch + fg + bg;
     if (hash in this._canvasCache) {
       var canvas = this._canvasCache[hash];
     } else {
@@ -119,12 +108,8 @@ export class RectBackend implements DisplayBackend {
     this._context.drawImage(canvas, x * this._spacingX, y * this._spacingY);
   }
 
-  protected _drawNoCache(data, clearBefore: boolean): void {
-    var x = data[0];
-    var y = data[1];
-    var ch = data[2];
-    var fg = data[3];
-    var bg = data[4];
+  protected _drawNoCache(data: DrawData, clearBefore: boolean): void {
+    const [x, y, ch, fg, bg] = data;
 
     if (clearBefore) {
       var b = this._options.border;

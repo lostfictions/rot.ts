@@ -1,15 +1,17 @@
 import { DisplayBackend } from "./backend";
+import { DrawData } from "./draw-data";
+import { DisplayOptions } from "./display-options";
 import { RectBackend } from "./rect";
 
 export class TileBackend extends RectBackend implements DisplayBackend {
-  protected _options = {};
+  protected _options: DisplayOptions | null = null;
   protected _colorCanvas = document.createElement("canvas");
 
-  constructor(context) {
+  constructor(context: CanvasRenderingContext2D) {
     super(context);
   }
 
-  compute(options): void {
+  compute(options: DisplayOptions): void {
     this._options = options;
     this._context.canvas.width = options.width * options.tileWidth;
     this._context.canvas.height = options.height * options.tileHeight;
@@ -17,15 +19,11 @@ export class TileBackend extends RectBackend implements DisplayBackend {
     this._colorCanvas.height = options.tileHeight;
   }
 
-  draw(data, clearBefore: boolean): void {
-    var x = data[0];
-    var y = data[1];
-    var ch = data[2];
-    var fg = data[3];
-    var bg = data[4];
+  draw(data: DrawData, clearBefore: boolean): void {
+    const [x, y, ch, fg, bg] = data;
 
-    var tileWidth = this._options.tileWidth;
-    var tileHeight = this._options.tileHeight;
+    const tileWidth = this._options.tileWidth;
+    const tileHeight = this._options.tileHeight;
 
     if (clearBefore) {
       if (this._options.tileColorize) {
@@ -52,15 +50,15 @@ export class TileBackend extends RectBackend implements DisplayBackend {
 
     var chars = [].concat(ch);
     for (var i = 0; i < chars.length; i++) {
-      var tile = this._options.tileMap[chars[i]];
+      const tile = this._options.tileMap[chars[i]];
       if (!tile) {
         throw new Error("Char '" + chars[i] + "' not found in tileMap");
       }
 
       if (this._options.tileColorize) {
         /* apply colorization */
-        var canvas = this._colorCanvas;
-        var context = canvas.getContext("2d");
+        const canvas = this._colorCanvas;
+        const context = canvas.getContext("2d");
         context.clearRect(0, 0, tileWidth, tileHeight);
 
         context.drawImage(
@@ -75,13 +73,13 @@ export class TileBackend extends RectBackend implements DisplayBackend {
           tileHeight
         );
 
-        if (fg != "transparent") {
+        if (fg !== "transparent") {
           context.fillStyle = fg;
           context.globalCompositeOperation = "source-atop";
           context.fillRect(0, 0, tileWidth, tileHeight);
         }
 
-        if (bg != "transparent") {
+        if (bg !== "transparent") {
           context.fillStyle = bg;
           context.globalCompositeOperation = "destination-over";
           context.fillRect(0, 0, tileWidth, tileHeight);

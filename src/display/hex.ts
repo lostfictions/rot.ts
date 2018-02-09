@@ -1,45 +1,39 @@
 import { DisplayBackend } from "./backend";
+import { DrawData } from "./draw-data";
+import { DisplayOptions } from "./display-options";
 import { mod } from "../util/number";
 
-export interface HexBackendOptions {
-  transpose: boolean;
-  width: number;
-  height: number;
-  fontFamily: string;
-  fontSize: number;
-  border: number;
-  spacing: number;
-}
-
 export class HexBackend implements DisplayBackend {
-  protected _context;
+  protected _context: CanvasRenderingContext2D;
 
   protected _spacingX = 0;
   protected _spacingY = 0;
   protected _hexSize = 0;
-  protected _options: HexBackendOptions;
+  protected _options: DisplayOptions;
 
-  constructor(context) {
+  constructor(context: CanvasRenderingContext2D) {
     this._context = context;
   }
 
-  compute(options: HexBackendOptions): void {
+  compute(options: DisplayOptions): void {
     this._options = options;
 
     /* FIXME char size computation does not respect transposed hexes */
-    var charWidth = Math.ceil(this._context.measureText("W").width);
+    const charWidth = Math.ceil(this._context.measureText("W").width);
     this._hexSize = Math.floor(
       options.spacing * (options.fontSize + charWidth / Math.sqrt(3)) / 2
     );
     this._spacingX = this._hexSize * Math.sqrt(3) / 2;
     this._spacingY = this._hexSize * 1.5;
 
+    let xprop: "height" | "width";
+    let yprop: "height" | "width";
     if (options.transpose) {
-      var xprop = "height";
-      var yprop = "width";
+      xprop = "height";
+      yprop = "width";
     } else {
-      var xprop = "width";
-      var yprop = "height";
+      xprop = "width";
+      yprop = "height";
     }
     this._context.canvas[xprop] = Math.ceil(
       (options.width + 1) * this._spacingX
@@ -49,12 +43,8 @@ export class HexBackend implements DisplayBackend {
     );
   }
 
-  draw(data, clearBefore: boolean): void {
-    var x = data[0];
-    var y = data[1];
-    var ch = data[2];
-    var fg = data[3];
-    var bg = data[4];
+  draw(data: DrawData, clearBefore: boolean): void {
+    const [x, y, ch, fg, bg] = data;
 
     var px = [(x + 1) * this._spacingX, y * this._spacingY + this._hexSize];
     if (this._options.transpose) {
@@ -148,7 +138,7 @@ export class HexBackend implements DisplayBackend {
    * Arguments are pixel values. If "transposed" mode is enabled, then these two
    * are already swapped.
    */
-  protected _fill(cx: number, cy: number) {
+  protected _fill(cx: number, cy: number): void {
     const a = this._hexSize;
     const b = this._options.border;
 
