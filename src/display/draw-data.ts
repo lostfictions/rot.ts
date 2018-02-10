@@ -1,11 +1,4 @@
 /**
- * Maps from a string in the format "x,y" to a DrawData tuple.
- */
-export interface DrawMap {
-  [pos: string]: DrawData;
-}
-
-/**
  * Data for drawing at a given position. A tuple containing, in order:
  *
  * - the x-coordinate

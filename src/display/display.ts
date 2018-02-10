@@ -1,31 +1,36 @@
 import { DisplayOptions } from "./display-options";
-import { DrawMap, DrawData } from "./draw-data";
+import { DrawData } from "./draw-data";
 import { DisplayBackend } from "./backend";
 import { RectBackend } from "./rect";
 
 import { TokenType, tokenize } from "../text";
 import { DEFAULT_WIDTH, DEFAULT_HEIGHT } from "../util";
-import { capitalize } from "../util/string";
 
 /**
  * Visual map display
  */
 export class Display {
   protected readonly _context: CanvasRenderingContext2D;
-  protected _data: DrawMap = {};
 
-  /** false = nothing, true = all, object = dirty cells */
+  /**
+   * Maps from a string in the format "${x},${y}" to a DrawData tuple.
+   */
+  protected _data: { [pos: string]: DrawData } = {};
+
+  /** false => nothing, true => all, object => dirty cells */
   protected _dirty: boolean | { [pos: string]: boolean } = false;
 
-  protected _options: DisplayOptions;
-  protected _backend: DisplayBackend | null = null;
+  // prettier-ignore
+  protected _options!: DisplayOptions;
+
+  // prettier-ignore
+  protected _backend!: DisplayBackend;
 
   constructor(options: Partial<DisplayOptions>) {
     const canvas = document.createElement("canvas");
-    this._context = canvas.getContext("2d");
+    this._context = canvas.getContext("2d")!;
     this._data = {};
     this._dirty = false; /* false = nothing, true = all, object = dirty cells */
-    this._backend = null;
 
     const optionsWithDefaults: DisplayOptions = {
       width: DEFAULT_WIDTH,
@@ -216,20 +221,17 @@ export class Display {
    * @returns number of lines drawn
    */
   drawText(x: number, y: number, text: string, maxWidth?: number): number {
-    var fg = null;
-    var bg = null;
-    var cx = x;
-    var cy = y;
-    var lines = 1;
-    if (!maxWidth) {
-      maxWidth = this._options.width - x;
-    }
+    let fg = null;
+    let bg = null;
+    let cx = x;
+    let cy = y;
+    let lines = 1;
 
-    const tokens = tokenize(text, maxWidth);
+    const tokens = tokenize(text, maxWidth || this._options.width - x);
 
     while (tokens.length) {
       /* interpret tokenized opcode stream */
-      const token = tokens.shift();
+      const token = tokens.shift()!;
       switch (token.type) {
         case TokenType.Text:
           let isPrevSpace = false;

@@ -25,11 +25,15 @@ export interface DisplayOptions {
 
   /** Maps from a character to a source x and y position in the tileset. */
   tileMap: { readonly [character: string]: [number, number] };
+
+  /** The tileset image. */
   tileSet:
     | HTMLCanvasElement
     | HTMLImageElement
     | HTMLVideoElement
-    | ImageBitmap;
+    | ImageBitmap
+    | null;
+
   tileColorize: boolean;
   termColor: string;
 }

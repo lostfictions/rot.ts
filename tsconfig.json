@@ -9,9 +9,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "declaration": true,
-    "checkJs": true,
-    "allowJs": true
-    // "allowSyntheticDefaultImports": true,
+    "allowJs": false
   },
   "include": ["./src/**/*"]
 }
