@@ -12,6 +12,8 @@ export { DiscreteShadowcasting } from "./fov/discrete-shadowcasting";
 export { PreciseShadowcasting } from "./fov/precise-shadowcasting";
 export { RecursiveShadowcasting } from "./fov/recursive-shadowcasting";
 
+export { Arena } from "./map/arena";
+
 export { Simplex } from "./noise/simplex";
 
 export { AStar } from "./path/astar";
