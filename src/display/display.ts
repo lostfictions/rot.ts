@@ -4,7 +4,7 @@ import { DisplayBackend } from "./backend";
 import { RectBackend } from "./rect";
 
 import { TokenType, tokenize } from "../text";
-import { DEFAULT_WIDTH, DEFAULT_HEIGHT } from "../util";
+import { DEFAULT_WIDTH, DEFAULT_HEIGHT } from "../constants";
 
 /**
  * Visual map display

@@ -8,8 +8,7 @@
  */
 
 import { Noise } from "./noise";
-import { randomize } from "../util/array";
-import { mod } from "../util/number";
+import { shuffleArray, mod } from "../util";
 
 /**
  * 2D simplex noise generator

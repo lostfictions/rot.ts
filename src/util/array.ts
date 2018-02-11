@@ -15,7 +15,7 @@ export function random<T>(arr: T[]): T | null {
  * Shuffle an array
  * @returns New array with randomized items
  */
-export function randomize<T>(arr: T[]): T[] {
+export function shuffle<T>(arr: T[]): T[] {
   const result: T[] = [];
   if (arr.length === 0) return result;
   const clone = arr.slice();

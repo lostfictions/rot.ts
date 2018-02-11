@@ -1,7 +1,7 @@
 import { DisplayBackend } from "./backend";
 import { DrawData } from "./draw-data";
 import { DisplayOptions } from "./display-options";
-import { mod } from "../util/number";
+import { mod } from "../util";
 
 export class HexBackend implements DisplayBackend {
   protected _context: CanvasRenderingContext2D;

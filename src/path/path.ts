@@ -1,4 +1,4 @@
-import { DIRS } from "../util";
+import { DIRS } from "../constants";
 
 export interface PathOptions {
   topology: 4 | 6 | 8;

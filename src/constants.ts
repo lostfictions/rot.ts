@@ -1,12 +1,3 @@
-/**
- * Is rot.js supported by this browser?
- */
-export function isSupported(): boolean {
-  return !!(
-    document.createElement("canvas").getContext && Function.prototype.bind
-  );
-}
-
 /** Default with for display and map generators */
 export const DEFAULT_WIDTH = 80;
 
@@ -14,7 +5,9 @@ export const DEFAULT_WIDTH = 80;
 export const DEFAULT_HEIGHT = 25;
 
 /** Directional constants. Ordering is important! */
-export const DIRS: { readonly [dir: number]: [number, number][] } = {
+export const DIRS: {
+  readonly [dir: number]: ReadonlyArray<Readonly<[number, number]>>;
+} = {
   4: [[0, -1], [1, 0], [0, 1], [-1, 0]],
   8: [[0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1]],
   6: [[-1, -1], [1, -1], [2, 0], [1, 1], [-1, 1], [-2, 0]]
