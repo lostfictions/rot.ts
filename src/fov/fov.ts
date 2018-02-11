@@ -53,7 +53,7 @@ export abstract class FOV {
    */
   protected _getCircle(cx: number, cy: number, r: number): [number, number][] {
     // prettier-ignore
-    let dirs!: [number, number][];
+    let dirs!: ReadonlyArray<[number, number]>;
     // prettier-ignore
     let countFactor!: number;
     // prettier-ignore

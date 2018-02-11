@@ -39,7 +39,7 @@ export class Simplex implements Noise {
     for (let i = 0; i < gradients; i++) {
       permutations.push(i);
     }
-    permutations = randomize(permutations);
+    permutations = shuffleArray(permutations);
 
     for (let i = 0; i < 2 * gradients; i++) {
       this._perms.push(permutations[i % gradients]);

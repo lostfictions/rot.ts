@@ -1,13 +1,24 @@
-import { Path, PathOptions } from "./path";
+import { Path, PathOptions, PassableCallback, ComputeCallback } from "./path";
+
+interface PathItem {
+  x: number;
+  y: number;
+  prev: PathItem | null;
+}
 
 /**
  * Simplified Dijkstra's algorithm: all edges have a value of 1
  */
 export class Dijkstra extends Path {
-  private _computed = {};
-  private _todo = [];
+  private _computed: { [pos: string]: PathItem } = {};
+  private _todo: PathItem[] = [];
 
-  constructor(toX: number, toY: number, passableCallback, options) {
+  constructor(
+    toX: number,
+    toY: number,
+    passableCallback: PassableCallback,
+    options: PathOptions
+  ) {
     super(toX, toY, passableCallback, options);
 
     this._add(toX, toY, null);
@@ -16,8 +27,8 @@ export class Dijkstra extends Path {
   /**
    * Compute a path from a given point
    */
-  compute(fromX, fromY, callback): void {
-    var key = fromX + "," + fromY;
+  compute(fromX: number, fromY: number, callback: ComputeCallback): void {
+    const key = `${fromX},${fromY}`;
     if (!(key in this._computed)) {
       this._compute(fromX, fromY);
     }
@@ -25,7 +36,7 @@ export class Dijkstra extends Path {
       return;
     }
 
-    var item = this._computed[key];
+    let item: PathItem | null = this._computed[key];
     while (item) {
       callback(item.x, item.y);
       item = item.prev;
@@ -35,33 +46,29 @@ export class Dijkstra extends Path {
   /**
    * Compute a non-cached value
    */
-  private _compute(fromX, fromY): void {
+  private _compute(fromX: number, fromY: number): void {
     while (this._todo.length) {
-      var item = this._todo.shift();
-      if (item.x == fromX && item.y == fromY) {
+      const item = this._todo.shift()!;
+      if (item.x === fromX && item.y === fromY) {
         return;
       }
 
-      var neighbors = this._getNeighbors(item.x, item.y);
+      const neighbors = this._getNeighbors(item.x, item.y);
 
-      for (var i = 0; i < neighbors.length; i++) {
-        var neighbor = neighbors[i];
-        var x = neighbor[0];
-        var y = neighbor[1];
-        var id = x + "," + y;
-        if (id in this._computed) {
+      for (const [x, y] of neighbors) {
+        if (`${x},${y}` in this._computed) {
           continue;
-        } /* already done */
+        }
         this._add(x, y, item);
       }
     }
   }
 
-  private _add(x, y, prev): void {
-    var obj = {
-      x: x,
-      y: y,
-      prev: prev
+  private _add(x: number, y: number, prev: PathItem | null): void {
+    const obj = {
+      x,
+      y,
+      prev
     };
     this._computed[x + "," + y] = obj;
     this._todo.push(obj);

@@ -1,16 +1,24 @@
-import { Path, PathOptions } from "./path";
+import { Path, PathOptions, PassableCallback, ComputeCallback } from "./path";
+
+interface PathItem {
+  x: number;
+  y: number;
+  prev: PathItem | null;
+  g: number;
+  h: number;
+}
 
 /**
  * Simplified A* algorithm: all edges have a value of 1
  */
 export class AStar extends Path {
-  private _todo = [];
-  private _done = {};
+  private _todo: PathItem[] = [];
+  private _done: { [pos: string]: PathItem } = {};
 
   constructor(
     toX: number,
     toY: number,
-    passableCallback,
+    passableCallback: PassableCallback,
     options: PathOptions
   ) {
     super(toX, toY, passableCallback, options);
@@ -19,7 +27,7 @@ export class AStar extends Path {
   /**
    * Compute a path from a given point
    */
-  compute(fromX: number, fromY: number, callback) {
+  compute(fromX: number, fromY: number, callback: ComputeCallback): void {
     this._todo = [];
     this._done = {};
     this._fromX = fromX;
@@ -27,31 +35,27 @@ export class AStar extends Path {
     this._add(this._toX, this._toY, null);
 
     while (this._todo.length) {
-      var item = this._todo.shift();
-      var id = item.x + "," + item.y;
-      if (id in this._done) {
+      const current = this._todo.shift()!;
+      const currentPos = `${current.x},${current.y}`;
+      if (currentPos in this._done) {
         continue;
       }
-      this._done[id] = item;
-      if (item.x == fromX && item.y == fromY) {
+      this._done[currentPos] = current;
+      if (current.x === fromX && current.y === fromY) {
         break;
       }
 
-      var neighbors = this._getNeighbors(item.x, item.y);
+      const neighbors = this._getNeighbors(current.x, current.y);
 
-      for (var i = 0; i < neighbors.length; i++) {
-        var neighbor = neighbors[i];
-        var x = neighbor[0];
-        var y = neighbor[1];
-        var id = x + "," + y;
-        if (id in this._done) {
+      for (const [x, y] of neighbors) {
+        if (`${x},${y}` in this._done) {
           continue;
         }
-        this._add(x, y, item);
+        this._add(x, y, current);
       }
     }
 
-    var item = this._done[fromX + "," + fromY];
+    let item: PathItem | null = this._done[fromX + "," + fromY];
     if (!item) {
       return;
     }
@@ -62,23 +66,23 @@ export class AStar extends Path {
     }
   }
 
-  private _add(x, y, prev) {
-    var h = this._distance(x, y);
-    var obj = {
-      x: x,
-      y: y,
-      prev: prev,
+  private _add(x: number, y: number, prev: PathItem | null): void {
+    const h = this._distance(x, y);
+    // prettier-ignore
+    const obj = {
+      x,
+      y,
+      prev,
       g: prev ? prev.g + 1 : 0,
-      h: h
+      h
     };
 
     /* insert into priority queue */
-
-    var f = obj.g + obj.h;
-    for (var i = 0; i < this._todo.length; i++) {
-      var item = this._todo[i];
-      var itemF = item.g + item.h;
-      if (f < itemF || (f == itemF && h < item.h)) {
+    const f = obj.g + obj.h;
+    for (let i = 0; i < this._todo.length; i++) {
+      const item = this._todo[i];
+      const itemF = item.g + item.h;
+      if (f < itemF || (f === itemF && h < item.h)) {
         this._todo.splice(i, 0, obj);
         return;
       }
@@ -91,19 +95,12 @@ export class AStar extends Path {
     switch (this._options.topology) {
       case 4:
         return Math.abs(x - this._fromX) + Math.abs(y - this._fromY);
-        break;
-
       case 6:
-        var dx = Math.abs(x - this._fromX);
-        var dy = Math.abs(y - this._fromY);
+        const dx = Math.abs(x - this._fromX);
+        const dy = Math.abs(y - this._fromY);
         return dy + Math.max(0, (dx - dy) / 2);
-        break;
-
       case 8:
         return Math.max(Math.abs(x - this._fromX), Math.abs(y - this._fromY));
-        break;
     }
-
-    throw new Error("Illegal topology");
   }
 }

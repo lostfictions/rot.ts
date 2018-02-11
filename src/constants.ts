@@ -6,7 +6,7 @@ export const DEFAULT_HEIGHT = 25;
 
 /** Directional constants. Ordering is important! */
 export const DIRS: {
-  readonly [dir: number]: ReadonlyArray<Readonly<[number, number]>>;
+  readonly [dir: number]: ReadonlyArray<[number, number]>;
 } = {
   4: [[0, -1], [1, 0], [0, 1], [-1, 0]],
   8: [[0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1]],

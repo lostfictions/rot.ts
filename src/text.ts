@@ -6,10 +6,10 @@ export enum TokenType {
 }
 
 export type Token =
-  | { type: TokenType.Newline }
   | { type: TokenType.Text; value: string }
   | { type: TokenType.FG; value: string }
-  | { type: TokenType.BG; value: string };
+  | { type: TokenType.BG; value: string }
+  | { type: TokenType.Newline };
 
 const RE_COLORS = /%([bc]){([^}]*)}/g;
 

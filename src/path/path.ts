@@ -4,17 +4,22 @@ export interface PathOptions {
   topology: 4 | 6 | 8;
 }
 
+export type ComputeCallback = (x: number, y: number) => any;
+export type PassableCallback = (x: number, y: number) => boolean;
+
 /**
  * Abstract pathfinder
  */
 export abstract class Path {
   protected _toX: number;
   protected _toY: number;
-  protected _fromX: number | null;
-  protected _fromY: number | null;
-  protected _passableCallback;
+  // prettier-ignore
+  protected _fromX!: number;
+  // prettier-ignore
+  protected _fromY!: number;
+  protected _passableCallback: PassableCallback;
   protected _options: PathOptions;
-  protected _dirs: [number, number][];
+  protected _dirs: ReadonlyArray<[number, number]>;
 
   /**
    * @param toX Target X coord
@@ -26,13 +31,11 @@ export abstract class Path {
   constructor(
     toX: number,
     toY: number,
-    passableCallback,
+    passableCallback: PassableCallback,
     options?: Partial<PathOptions>
   ) {
     this._toX = toX;
     this._toY = toY;
-    this._fromX = null;
-    this._fromY = null;
     this._passableCallback = passableCallback;
     this._options = {
       topology: 8,
@@ -61,7 +64,11 @@ export abstract class Path {
    * @param fromY
    * @param callback Will be called for every path item with arguments "x" and "y"
    */
-  protected abstract compute(fromX: number, fromY: number, callback);
+  protected abstract compute(
+    fromX: number,
+    fromY: number,
+    callback: ComputeCallback
+  ): void;
 
   protected _getNeighbors(cx: number, cy: number): [number, number][] {
     const result: [number, number][] = [];

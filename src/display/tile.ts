@@ -4,7 +4,7 @@ import { DisplayOptions } from "./display-options";
 import { RectBackend } from "./rect";
 
 export class TileBackend extends RectBackend implements DisplayBackend {
-  protected _options: DisplayOptions | null = null;
+  protected _options: DisplayOptions;
   protected _colorCanvas = document.createElement("canvas");
 
   constructor(context: CanvasRenderingContext2D) {
