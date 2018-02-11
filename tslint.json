@@ -17,13 +17,7 @@
       ]
     },
     "member-access": [true, "no-public"],
-    "member-ordering": [
-      true,
-      {
-        "order": "statics-first",
-        "alphabetize": false
-      }
-    ],
+    "member-ordering": false,
     "no-any": false,
     "no-empty-interface": true,
     "no-import-side-effect": false,
@@ -113,14 +107,7 @@
     "prefer-const": true,
     "trailing-comma": false,
     "////////////// STYLE": false,
-    "align": [
-      true,
-      "parameters",
-      "arguments",
-      "statements",
-      "elements",
-      "members"
-    ],
+    "align": false,
     "arrow-return-shorthand": [true, "multiline"],
     "binary-expression-operand-order": false,
     "callable-types": false,
