@@ -1,3 +1,8 @@
+import { defaultRNG } from "../rng";
+
+export type DigCallback = (x: number, y: number, value: number) => any;
+export type TestPositionCallback = (x: number, y: number) => boolean;
+
 export interface FeatureConstructor {
   new (): Feature;
   createRandomAt(
@@ -5,7 +10,7 @@ export interface FeatureConstructor {
     y: number,
     dx: number,
     dy: number,
-    options
+    options: { [option: string]: any }
   ): Feature;
 }
 
@@ -13,12 +18,46 @@ export interface FeatureConstructor {
  * Dungeon feature; has own .create() method
  */
 export interface Feature {
-  isValid(canBeDugCallback): boolean;
-  create(digCallback): void;
+  isValid(canBeDugCallback: TestPositionCallback): boolean;
+  create(digCallback: DigCallback): void;
   debug(): void;
 }
 
+export interface RoomCreateOptions {
+  roomWidth: [number, number];
+  roomHeight: [number, number];
+}
+
 export class Room implements Feature {
+  protected readonly _x1: number;
+  protected readonly _y1: number;
+  protected readonly _x2: number;
+  protected readonly _y2: number;
+  protected _doors: { [pos: string]: number } = {};
+
+  get center(): [number, number] {
+    return [
+      Math.round((this._x1 + this._x2) / 2),
+      Math.round((this._y1 + this._y2) / 2)
+    ];
+  }
+
+  get left(): number {
+    return this._x1;
+  }
+
+  get right(): number {
+    return this._x2;
+  }
+
+  get top(): number {
+    return this._y1;
+  }
+
+  get bottom(): number {
+    return this._y2;
+  }
+
   constructor(
     x1: number,
     y1: number,
@@ -31,8 +70,7 @@ export class Room implements Feature {
     this._y1 = y1;
     this._x2 = x2;
     this._y2 = y2;
-    this._doors = {};
-    if (arguments.length > 4) {
+    if (doorX != null && doorY != null) {
       this.addDoor(doorX, doorY);
     }
   }
@@ -40,36 +78,39 @@ export class Room implements Feature {
   /**
    * Room of random size, with a given doors and direction
    */
-  static createRandomAt(x, y, dx, dy, options): Room {
-    var min = options.roomWidth[0];
-    var max = options.roomWidth[1];
-    var width = ROT.RNG.getUniformInt(min, max);
+  static createRandomAt(
+    x: number,
+    y: number,
+    dx: number,
+    dy: number,
+    options: RoomCreateOptions
+  ): Room {
+    const [wMin, wMax] = options.roomWidth;
+    const [hMin, hMax] = options.roomHeight;
+    const width = defaultRNG.getUniformInt(wMin, wMax);
+    const height = defaultRNG.getUniformInt(hMin, hMax);
 
-    var min = options.roomHeight[0];
-    var max = options.roomHeight[1];
-    var height = ROT.RNG.getUniformInt(min, max);
-
-    if (dx == 1) {
+    if (dx === 1) {
       /* to the right */
-      var y2 = y - Math.floor(ROT.RNG.getUniform() * height);
+      const y2 = y - Math.floor(defaultRNG.getUniform() * height);
       return new this(x + 1, y2, x + width, y2 + height - 1, x, y);
     }
 
-    if (dx == -1) {
+    if (dx === -1) {
       /* to the left */
-      var y2 = y - Math.floor(ROT.RNG.getUniform() * height);
+      const y2 = y - Math.floor(defaultRNG.getUniform() * height);
       return new this(x - width, y2, x - 1, y2 + height - 1, x, y);
     }
 
-    if (dy == 1) {
+    if (dy === 1) {
       /* to the bottom */
-      var x2 = x - Math.floor(ROT.RNG.getUniform() * width);
+      const x2 = x - Math.floor(defaultRNG.getUniform() * width);
       return new this(x2, y + 1, x2 + width - 1, y + height, x, y);
     }
 
-    if (dy == -1) {
+    if (dy === -1) {
       /* to the top */
-      var x2 = x - Math.floor(ROT.RNG.getUniform() * width);
+      const x2 = x - Math.floor(defaultRNG.getUniform() * width);
       return new this(x2, y - height, x2 + width - 1, y - 1, x, y);
     }
 
@@ -79,19 +120,21 @@ export class Room implements Feature {
   /**
    * Room of random size, positioned around center coords
    */
-  static createRandomCenter(cx, cy, options): Room {
-    var min = options.roomWidth[0];
-    var max = options.roomWidth[1];
-    var width = ROT.RNG.getUniformInt(min, max);
+  static createRandomCenter(
+    cx: number,
+    cy: number,
+    options: RoomCreateOptions
+  ): Room {
+    const [wMin, wMax] = options.roomWidth;
+    const width = defaultRNG.getUniformInt(wMin, wMax);
 
-    var min = options.roomHeight[0];
-    var max = options.roomHeight[1];
-    var height = ROT.RNG.getUniformInt(min, max);
+    const [hMin, hMax] = options.roomHeight;
+    const height = defaultRNG.getUniformInt(hMin, hMax);
 
-    var x1 = cx - Math.floor(ROT.RNG.getUniform() * width);
-    var y1 = cy - Math.floor(ROT.RNG.getUniform() * height);
-    var x2 = x1 + width - 1;
-    var y2 = y1 + height - 1;
+    const x1 = cx - Math.floor(defaultRNG.getUniform() * width);
+    const y1 = cy - Math.floor(defaultRNG.getUniform() * height);
+    const x2 = x1 + width - 1;
+    const y2 = y1 + height - 1;
 
     return new this(x1, y1, x2, y2);
   }
@@ -99,53 +142,51 @@ export class Room implements Feature {
   /**
    * Room of random size within a given dimensions
    */
-  static createRandom(availWidth, availHeight, options): Room {
-    var min = options.roomWidth[0];
-    var max = options.roomWidth[1];
-    var width = ROT.RNG.getUniformInt(min, max);
+  static createRandom(
+    availWidth: number,
+    availHeight: number,
+    options: RoomCreateOptions
+  ): Room {
+    const [wMin, wMax] = options.roomWidth;
+    const width = defaultRNG.getUniformInt(wMin, wMax);
 
-    var min = options.roomHeight[0];
-    var max = options.roomHeight[1];
-    var height = ROT.RNG.getUniformInt(min, max);
+    const [hMin, hMax] = options.roomHeight;
+    const height = defaultRNG.getUniformInt(hMin, hMax);
 
-    var left = availWidth - width - 1;
-    var top = availHeight - height - 1;
+    const left = availWidth - width - 1;
+    const top = availHeight - height - 1;
 
-    var x1 = 1 + Math.floor(ROT.RNG.getUniform() * left);
-    var y1 = 1 + Math.floor(ROT.RNG.getUniform() * top);
-    var x2 = x1 + width - 1;
-    var y2 = y1 + height - 1;
+    const x1 = 1 + Math.floor(defaultRNG.getUniform() * left);
+    const y1 = 1 + Math.floor(defaultRNG.getUniform() * top);
+    const x2 = x1 + width - 1;
+    const y2 = y1 + height - 1;
 
     return new this(x1, y1, x2, y2);
   }
 
-  addDoor(x, y) {
-    this._doors[x + "," + y] = 1;
-    return this;
+  addDoor(x: number, y: number): void {
+    this._doors[`${x},${y}`] = 1;
   }
 
-  getDoors(callback) {
-    for (var key in this._doors) {
-      var parts = key.split(",");
-      callback(parseInt(parts[0]), parseInt(parts[1]));
+  getDoors(cb: (x: number, y: number) => any): void {
+    for (const [x, y] of Object.keys(this._doors).map(pos => pos.split(","))) {
+      cb(parseInt(x, 10), parseInt(y, 10));
     }
-    return this;
   }
 
-  clearDoors() {
+  clearDoors(): void {
     this._doors = {};
-    return this;
   }
 
-  addDoors(isWallCallback) {
-    var left = this._x1 - 1;
-    var right = this._x2 + 1;
-    var top = this._y1 - 1;
-    var bottom = this._y2 + 1;
+  addDoors(isWallCallback: TestPositionCallback): void {
+    const left = this._x1 - 1;
+    const right = this._x2 + 1;
+    const top = this._y1 - 1;
+    const bottom = this._y2 + 1;
 
-    for (var x = left; x <= right; x++) {
-      for (var y = top; y <= bottom; y++) {
-        if (x != left && x != right && y != top && y != bottom) {
+    for (let x = left; x <= right; x++) {
+      for (let y = top; y <= bottom; y++) {
+        if (x !== left && x !== right && y !== top && y !== bottom) {
           continue;
         }
         if (isWallCallback(x, y)) {
@@ -155,23 +196,24 @@ export class Room implements Feature {
         this.addDoor(x, y);
       }
     }
-
-    return this;
   }
 
   debug(): void {
     console.log("room", this._x1, this._y1, this._x2, this._y2);
   }
 
-  isValid(isWallCallback, canBeDugCallback): boolean {
-    var left = this._x1 - 1;
-    var right = this._x2 + 1;
-    var top = this._y1 - 1;
-    var bottom = this._y2 + 1;
+  isValid(
+    isWallCallback: TestPositionCallback,
+    canBeDugCallback: TestPositionCallback
+  ): boolean {
+    const left = this._x1 - 1;
+    const right = this._x2 + 1;
+    const top = this._y1 - 1;
+    const bottom = this._y2 + 1;
 
-    for (var x = left; x <= right; x++) {
-      for (var y = top; y <= bottom; y++) {
-        if (x == left || x == right || y == top || y == bottom) {
+    for (let x = left; x <= right; x++) {
+      for (let y = top; y <= bottom; y++) {
+        if (x === left || x === right || y === top || y === bottom) {
           if (!isWallCallback(x, y)) {
             return false;
           }
@@ -187,20 +229,21 @@ export class Room implements Feature {
   }
 
   /**
-   * @param {function} digCallback Dig callback with a signature (x, y, value). Values: 0 = empty, 1 = wall, 2 = door. Multiple doors are allowed.
+   * @param digCallback Dig callback with a signature (x, y, value). Values: 0 =
+   *                    empty, 1 = wall, 2 = door. Multiple doors are allowed.
    */
-  create(digCallback) {
-    var left = this._x1 - 1;
-    var right = this._x2 + 1;
-    var top = this._y1 - 1;
-    var bottom = this._y2 + 1;
+  create(digCallback: DigCallback): void {
+    const left = this._x1 - 1;
+    const right = this._x2 + 1;
+    const top = this._y1 - 1;
+    const bottom = this._y2 + 1;
 
-    var value = 0;
-    for (var x = left; x <= right; x++) {
-      for (var y = top; y <= bottom; y++) {
-        if (x + "," + y in this._doors) {
+    let value = 0;
+    for (let x = left; x <= right; x++) {
+      for (let y = top; y <= bottom; y++) {
+        if (`${x},${y}` in this._doors) {
           value = 2;
-        } else if (x == left || x == right || y == top || y == bottom) {
+        } else if (x === left || x === right || y === top || y === bottom) {
           value = 1;
         } else {
           value = 0;
@@ -209,32 +252,26 @@ export class Room implements Feature {
       }
     }
   }
+}
 
-  getCenter() {
-    return [
-      Math.round((this._x1 + this._x2) / 2),
-      Math.round((this._y1 + this._y2) / 2)
-    ];
-  }
+//
+//
+//
+//
+//
+//
 
-  getLeft() {
-    return this._x1;
-  }
-
-  getRight() {
-    return this._x2;
-  }
-
-  getTop() {
-    return this._y1;
-  }
-
-  getBottom() {
-    return this._y2;
-  }
+export interface CorridorCreateOptions {
+  corridorLength: [number, number];
 }
 
 export class Corridor implements Feature {
+  protected readonly _startX: number;
+  protected readonly _startY: number;
+  protected readonly _endX: number;
+  protected readonly _endY: number;
+  protected _endsWithAWall = true;
+
   constructor(startX: number, startY: number, endX: number, endY: number) {
     this._startX = startX;
     this._startY = startY;
@@ -243,10 +280,15 @@ export class Corridor implements Feature {
     this._endsWithAWall = true;
   }
 
-  static createRandomAt(x, y, dx, dy, options): Corridor {
-    var min = options.corridorLength[0];
-    var max = options.corridorLength[1];
-    var length = ROT.RNG.getUniformInt(min, max);
+  static createRandomAt(
+    x: number,
+    y: number,
+    dx: number,
+    dy: number,
+    options: CorridorCreateOptions
+  ): Corridor {
+    const [min, max] = options.corridorLength;
+    const length = defaultRNG.getUniformInt(min, max);
 
     return new this(x, y, x + dx * length, y + dy * length);
   }
@@ -255,26 +297,29 @@ export class Corridor implements Feature {
     console.log("corridor", this._startX, this._startY, this._endX, this._endY);
   }
 
-  isValid(isWallCallback, canBeDugCallback): boolean {
-    var sx = this._startX;
-    var sy = this._startY;
-    var dx = this._endX - sx;
-    var dy = this._endY - sy;
-    var length = 1 + Math.max(Math.abs(dx), Math.abs(dy));
+  isValid(
+    isWallCallback: TestPositionCallback,
+    canBeDugCallback: TestPositionCallback
+  ): boolean {
+    const sx = this._startX;
+    const sy = this._startY;
+    let dx = this._endX - sx;
+    let dy = this._endY - sy;
+    let length = 1 + Math.max(Math.abs(dx), Math.abs(dy));
 
-    if (dx) {
+    if (dx !== 0) {
       dx = dx / Math.abs(dx);
     }
-    if (dy) {
+    if (dy !== 0) {
       dy = dy / Math.abs(dy);
     }
-    var nx = dy;
-    var ny = -dx;
+    const nx = dy;
+    const ny = -dx;
 
-    var ok = true;
-    for (var i = 0; i < length; i++) {
-      var x = sx + i * dx;
-      var y = sy + i * dy;
+    let ok = true;
+    for (let i = 0; i < length; i++) {
+      const x = sx + i * dx;
+      const y = sy + i * dy;
 
       if (!canBeDugCallback(x, y)) {
         ok = false;
@@ -299,12 +344,12 @@ export class Corridor implements Feature {
      */
 
     /* not supported */
-    if (length == 0) {
+    if (length === 0) {
       return false;
     }
 
     /* length 1 allowed only if the next space is empty */
-    if (length == 1 && isWallCallback(this._endX + dx, this._endY + dy)) {
+    if (length === 1 && isWallCallback(this._endX + dx, this._endY + dy)) {
       return false;
     }
 
@@ -320,11 +365,11 @@ export class Corridor implements Feature {
      * The corridor was dug from left to right.
      * 1, 2 - problematic corners, ? = N+1th cell (not dug)
      */
-    var firstCornerBad = !isWallCallback(
+    const firstCornerBad = !isWallCallback(
       this._endX + dx + nx,
       this._endY + dy + ny
     );
-    var secondCornerBad = !isWallCallback(
+    const secondCornerBad = !isWallCallback(
       this._endX + dx - nx,
       this._endY + dy - ny
     );
@@ -337,51 +382,50 @@ export class Corridor implements Feature {
   }
 
   /**
-   * @param {function} digCallback Dig callback with a signature (x, y, value). Values: 0 = empty.
+   * @param digCallback Dig callback with a signature (x, y, value). Values: 0 =
+   *                    empty.
    */
-  create(digCallback) {
-    var sx = this._startX;
-    var sy = this._startY;
-    var dx = this._endX - sx;
-    var dy = this._endY - sy;
-    var length = 1 + Math.max(Math.abs(dx), Math.abs(dy));
+  create(digCallback: DigCallback): void {
+    const sx = this._startX;
+    const sy = this._startY;
+    let dx = this._endX - sx;
+    let dy = this._endY - sy;
+    const length = 1 + Math.max(Math.abs(dx), Math.abs(dy));
 
-    if (dx) {
+    if (dx !== 0) {
       dx = dx / Math.abs(dx);
     }
-    if (dy) {
+    if (dy !== 0) {
       dy = dy / Math.abs(dy);
     }
-    var nx = dy;
-    var ny = -dx;
 
-    for (var i = 0; i < length; i++) {
-      var x = sx + i * dx;
-      var y = sy + i * dy;
+    for (let i = 0; i < length; i++) {
+      const x = sx + i * dx;
+      const y = sy + i * dy;
       digCallback(x, y, 0);
     }
-
-    return true;
   }
 
-  createPriorityWalls(priorityWallCallback) {
+  createPriorityWalls(
+    priorityWallCallback: (x: number, y: number) => any
+  ): void {
     if (!this._endsWithAWall) {
       return;
     }
 
-    var sx = this._startX;
-    var sy = this._startY;
+    const sx = this._startX;
+    const sy = this._startY;
 
-    var dx = this._endX - sx;
-    var dy = this._endY - sy;
+    let dx = this._endX - sx;
+    let dy = this._endY - sy;
     if (dx) {
       dx = dx / Math.abs(dx);
     }
     if (dy) {
       dy = dy / Math.abs(dy);
     }
-    var nx = dy;
-    var ny = -dx;
+    const nx = dy;
+    const ny = -dx;
 
     priorityWallCallback(this._endX + dx, this._endY + dy);
     priorityWallCallback(this._endX + nx, this._endY + ny);
