@@ -1,61 +1,75 @@
-# pathTest.coffee
-#----------------------------------------------------------------------------
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// pathTest.coffee
+//----------------------------------------------------------------------------
 
-should = require "should"
-ROT = require "../../lib/rot"
+const should = require("should");
+const ROT = require("../../lib/rot");
 
-describe "path", ->
-  it "should export ROT.Path", ->
-    ROT.should.have.property "Path"
+describe("path", function() {
+  it("should export ROT.Path", () => ROT.should.have.property("Path"));
 
-  it "should be possible to create a Path object", ->
-    path = new ROT.Path()
-    path.should.be.ok
+  it("should be possible to create a Path object", function() {
+    const path = new ROT.Path();
+    return path.should.be.ok;
+  });
     
-  describe "Path", ->
-    describe "Path", ->
-      it "should be possible to create a Path object with options", ->
-        toX = 0
-        toY = 0
-        passableCallback = (x,y) -> true
-        options =
-          topology: 6
-        path = new ROT.Path toX, toY, passableCallback, options
-        path.should.be.ok
+  return describe("Path", function() {
+    describe("Path", () =>
+      it("should be possible to create a Path object with options", function() {
+        const toX = 0;
+        const toY = 0;
+        const passableCallback = (x,y) => true;
+        const options =
+          {topology: 6};
+        const path = new ROT.Path(toX, toY, passableCallback, options);
+        return path.should.be.ok;
+      })
+    );
 
-    describe "compute", ->
-      it "should not do anything", ->
-        toX = 0
-        toY = 0
-        passableCallback = (x,y) -> true
-        options =
-          topology: 6
-        path = new ROT.Path toX, toY, passableCallback, options
-        result = path.compute()
-        should(result).equal undefined
+    describe("compute", () =>
+      it("should not do anything", function() {
+        const toX = 0;
+        const toY = 0;
+        const passableCallback = (x,y) => true;
+        const options =
+          {topology: 6};
+        const path = new ROT.Path(toX, toY, passableCallback, options);
+        const result = path.compute();
+        return should(result).equal(undefined);
+      })
+    );
 
-    describe "_getNeighbors", ->
-      it "should provide topology neighbors when passable", ->
-        TOPOLOGY = 6
-        toX = 0
-        toY = 0
-        passableCallback = (x,y) -> true
-        options =
-          topology: TOPOLOGY
-        path = new ROT.Path toX, toY, passableCallback, options
-        neighbors = path._getNeighbors()
-        neighbors.length.should.equal TOPOLOGY
+    return describe("_getNeighbors", function() {
+      it("should provide topology neighbors when passable", function() {
+        const TOPOLOGY = 6;
+        const toX = 0;
+        const toY = 0;
+        const passableCallback = (x,y) => true;
+        const options =
+          {topology: TOPOLOGY};
+        const path = new ROT.Path(toX, toY, passableCallback, options);
+        const neighbors = path._getNeighbors();
+        return neighbors.length.should.equal(TOPOLOGY);
+      });
 
-      it "should provide zero neighbors when not passable", ->
-        TOPOLOGY = 6
-        toX = 0
-        toY = 0
-        passableCallback = (x,y) -> false
-        options =
-          topology: TOPOLOGY
-        path = new ROT.Path toX, toY, passableCallback, options
-        neighbors = path._getNeighbors()
-        neighbors.length.should.equal 0
+      return it("should provide zero neighbors when not passable", function() {
+        const TOPOLOGY = 6;
+        const toX = 0;
+        const toY = 0;
+        const passableCallback = (x,y) => false;
+        const options =
+          {topology: TOPOLOGY};
+        const path = new ROT.Path(toX, toY, passableCallback, options);
+        const neighbors = path._getNeighbors();
+        return neighbors.length.should.equal(0);
+      });
+    });
+  });
+});
 
-#----------------------------------------------------------------------------
-# end of pathTest.coffee
+//----------------------------------------------------------------------------
+// end of pathTest.coffee

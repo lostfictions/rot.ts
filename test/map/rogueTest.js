@@ -1,181 +1,243 @@
-# rogueTest.coffee
-#----------------------------------------------------------------------------
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS205: Consider reworking code to avoid use of IIFEs
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// rogueTest.coffee
+//----------------------------------------------------------------------------
 
-_ = require "underscore"
-should = require "should"
-ROT = require "../../lib/rot"
+const _ = require("underscore");
+const should = require("should");
+const ROT = require("../../lib/rot");
 
-describe "rogue", ->
-  it "should export ROT.Map.Rogue", ->
-    ROT.should.have.property "Map"
-    ROT.Map.should.have.property "Rogue"
+describe("rogue", function() {
+  it("should export ROT.Map.Rogue", function() {
+    ROT.should.have.property("Map");
+    return ROT.Map.should.have.property("Rogue");
+  });
 
-  it "should be possible to create a Rogue object", ->
-    dungeon = new ROT.Map.Rogue()
-    dungeon.should.be.ok
+  it("should be possible to create a Rogue object", function() {
+    const dungeon = new ROT.Map.Rogue();
+    return dungeon.should.be.ok;
+  });
 
-  describe "Rogue", ->
-    xit "should extend ROT.Map.Dungeon", ->
-      dungeon = new ROT.Map.Rogue()
-      dungeon.should.be.an.instanceof ROT.Map
-      dungeon.should.be.an.instanceof ROT.Map.Dungeon
-      dungeon.should.be.an.instanceof ROT.Map.Rogue
+  return describe("Rogue", function() {
+    xit("should extend ROT.Map.Dungeon", function() {
+      const dungeon = new ROT.Map.Rogue();
+      dungeon.should.be.an.instanceof(ROT.Map);
+      dungeon.should.be.an.instanceof(ROT.Map.Dungeon);
+      return dungeon.should.be.an.instanceof(ROT.Map.Rogue);
+    });
   
-    describe "create", ->
-      it "should call the callback width x height times", (done) ->
-        { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT
-        almostDone = _.after DEFAULT_WIDTH*DEFAULT_HEIGHT, done
-        dungeon = new ROT.Map.Rogue()
-        dungeon.create (x, y, value) ->
-          almostDone()
-        dungeon._options.should.have.properties [ "roomWidth", "roomHeight" ]
+    describe("create", function() {
+      it("should call the callback width x height times", function(done) {
+        const { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT;
+        const almostDone = _.after(DEFAULT_WIDTH*DEFAULT_HEIGHT, done);
+        const dungeon = new ROT.Map.Rogue();
+        dungeon.create((x, y, value) => almostDone());
+        return dungeon._options.should.have.properties([ "roomWidth", "roomHeight" ]);
+    });
 
-      it "should accept options", (done) ->
-        { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT
-        almostDone = _.after DEFAULT_WIDTH*DEFAULT_HEIGHT, done
-        dungeon = new ROT.Map.Rogue DEFAULT_WIDTH, DEFAULT_HEIGHT, MOCK_options =
-          cellWidth: 3
+      it("should accept options", function(done) {
+        let MOCK_options;
+        const { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT;
+        const almostDone = _.after(DEFAULT_WIDTH*DEFAULT_HEIGHT, done);
+        const dungeon = new ROT.Map.Rogue(DEFAULT_WIDTH, DEFAULT_HEIGHT, (MOCK_options = {
+          cellWidth: 3,
           cellHeight: 3
-        dungeon.create (x, y, value) ->
-          almostDone()
+        })
+        );
+        return dungeon.create((x, y, value) => almostDone());
+      });
 
-      it "should accept extended options", (done) ->
-        { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT
-        almostDone = _.after DEFAULT_WIDTH*DEFAULT_HEIGHT, done
-        dungeon = new ROT.Map.Rogue DEFAULT_WIDTH, DEFAULT_HEIGHT, MOCK_options =
-          cellWidth: 3
-          cellHeight: 3
-          roomHeight: [2, 6]
+      it("should accept extended options", function(done) {
+        let MOCK_options;
+        const { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT;
+        const almostDone = _.after(DEFAULT_WIDTH*DEFAULT_HEIGHT, done);
+        const dungeon = new ROT.Map.Rogue(DEFAULT_WIDTH, DEFAULT_HEIGHT, (MOCK_options = {
+          cellWidth: 3,
+          cellHeight: 3,
+          roomHeight: [2, 6],
           roomWidth: [6, 21]
-        dungeon.create (x, y, value) ->
-          almostDone()
+        }));
+        return dungeon.create((x, y, value) => almostDone());
+      });
 
-      it "should be OK if no callback is provided", ->
-        dungeon = new ROT.Map.Rogue()
-        dungeon.create()
+      return it("should be OK if no callback is provided", function() {
+        const dungeon = new ROT.Map.Rogue();
+        return dungeon.create();
+      });
+    });
 
-    describe "getRooms", ->
-      xit "should not return an empty array", ->
-        dungeon = new ROT.Map.Rogue()
-        dungeon.create()
-        rooms = dungeon.getRooms()
-        rooms.length.should.be.greaterThan 1
+    describe("getRooms", () =>
+      xit("should not return an empty array", function() {
+        const dungeon = new ROT.Map.Rogue();
+        dungeon.create();
+        const rooms = dungeon.getRooms();
+        return rooms.length.should.be.greaterThan(1);
+      })
+    );
 
-    describe "getCorridors", ->
-      xit "should not return an empty array", ->
-        dungeon = new ROT.Map.Rogue()
-        dungeon.create()
-        corridors = dungeon.getCorridors()
-        corridors.length.should.be.greaterThan 1
+    describe("getCorridors", () =>
+      xit("should not return an empty array", function() {
+        const dungeon = new ROT.Map.Rogue();
+        dungeon.create();
+        const corridors = dungeon.getCorridors();
+        return corridors.length.should.be.greaterThan(1);
+      })
+    );
 
-    describe "_calculateRoomSize", ->
-      it "should ensure a minimum size of 2", ->
-        dungeon = new ROT.Map.Rogue()
-        [min, max] = dungeon._calculateRoomSize 1, 1
-        min.should.equal 2
-        max.should.equal 2
+    describe("_calculateRoomSize", () =>
+      it("should ensure a minimum size of 2", function() {
+        const dungeon = new ROT.Map.Rogue();
+        const [min, max] = Array.from(dungeon._calculateRoomSize(1, 1));
+        min.should.equal(2);
+        return max.should.equal(2);
+      })
+    );
 
-    describe "_connectUnconnectedRooms", ->
-      it "should keep looping until it finds a valid room", ->
-        dungeon = new ROT.Map.Rogue()
-        dungeon.connectedCells = []
-        newRoom = ->
+    describe("_connectUnconnectedRooms", function() {
+      it("should keep looping until it finds a valid room", function() {
+        const dungeon = new ROT.Map.Rogue();
+        dungeon.connectedCells = [];
+        const newRoom = function() {
+          let room;
           return room =
-            connections: []
-        dungeon.rooms = (newRoom() for x in [0...3] for y in [0...3])
-        dungeon._connectUnconnectedRooms()
+            {connections: []};
+        };
+        dungeon.rooms = ([0, 1, 2].map((y) => [0, 1, 2].map((x) => newRoom())));
+        return dungeon._connectUnconnectedRooms();
+      });
 
-      it "should skip rooms that are already connected to each other", ->
-        dungeon = new ROT.Map.Rogue()
-        dungeon.connectedCells = []
-        newRoom = ->
+      it("should skip rooms that are already connected to each other", function() {
+        let y, x;
+        const dungeon = new ROT.Map.Rogue();
+        dungeon.connectedCells = [];
+        const newRoom = function() {
+          let room;
           return room =
-            connections: []
-        dungeon.rooms = (newRoom() for x in [0...3] for y in [0...3])
-        for x in [0...3]
-          for y in [0...3]
-            if (x isnt 0) and (y isnt 0)
-              for i in [0...3]
-                for j in [0...3]
-                  if (i isnt 0) and (j isnt 0)
-                    dungeon.rooms[x][y].connections.push [i,j]
-        dungeon._connectUnconnectedRooms()
+            {connections: []};
+        };
+        dungeon.rooms = ((() => {
+          const result = [];
+          for (y = 0; y < 3; y++) {
+            result.push((() => {
+              const result1 = [];
+              for (x = 0; x < 3; x++) {
+                result1.push(newRoom());
+              }
+              return result1;
+            })());
+          }
+          return result;
+        })());
+        for (x = 0; x < 3; x++) {
+          for (y = 0; y < 3; y++) {
+            if ((x !== 0) && (y !== 0)) {
+              for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                  if ((i !== 0) && (j !== 0)) {
+                    dungeon.rooms[x][y].connections.push([i,j]);
+                  }
+                }
+              }
+            }
+          }
+        }
+        return dungeon._connectUnconnectedRooms();
+      });
 
-      it "should log if it can't connect a room", ->
-        dungeon = new ROT.Map.Rogue()
-        dungeon.connectedCells = []
-        dungeon._options.cellWidth = 1
-        dungeon._options.cellHeight = 1
-        newRoom = ->
+      return it("should log if it can't connect a room", function() {
+        const dungeon = new ROT.Map.Rogue();
+        dungeon.connectedCells = [];
+        dungeon._options.cellWidth = 1;
+        dungeon._options.cellHeight = 1;
+        const newRoom = function() {
+          let room;
           return room =
-            connections: []
-        dungeon.rooms = (newRoom() for x in [0...1] for y in [0...1])
-        dungeon._connectUnconnectedRooms()
+            {connections: []};
+        };
+        dungeon.rooms = ([0].map((y) => [0].map((x) => newRoom())));
+        return dungeon._connectUnconnectedRooms();
+      });
+    });
 
-    describe "_createRooms", ->
-      it "should create some very small rooms", ->
-        w = 9
-        h = 9
-        cw = 3
-        ch = 3
-        roomWidth = [2, 6]
-        roomHeight = [2, 6]
-        dungeon = new ROT.Map.Rogue 9, 9
-        dungeon._width = w
-        dungeon._height = h
-        dungeon._options.cellWidth = cw
-        dungeon._options.cellHeight = ch
-        dungeon._options.roomWidth = roomWidth
-        dungeon._options.roomHeight = roomHeight
-        dungeon.rooms = []
-        dungeon.map = dungeon._fillMap 0
-        dungeon._initRooms()
-        dungeon._createRooms()
+    describe("_createRooms", function() {
+      it("should create some very small rooms", function() {
+        const w = 9;
+        const h = 9;
+        const cw = 3;
+        const ch = 3;
+        const roomWidth = [2, 6];
+        const roomHeight = [2, 6];
+        const dungeon = new ROT.Map.Rogue(9, 9);
+        dungeon._width = w;
+        dungeon._height = h;
+        dungeon._options.cellWidth = cw;
+        dungeon._options.cellHeight = ch;
+        dungeon._options.roomWidth = roomWidth;
+        dungeon._options.roomHeight = roomHeight;
+        dungeon.rooms = [];
+        dungeon.map = dungeon._fillMap(0);
+        dungeon._initRooms();
+        return dungeon._createRooms();
+      });
 
-      it "should create some small rooms", ->
-        w = 10
-        h = 10
-        cw = 3
-        ch = 3
-        roomWidth = [2, 6]
-        roomHeight = [2, 6]
-        dungeon = new ROT.Map.Rogue 10, 10
-        dungeon._width = w
-        dungeon._height = h
-        dungeon._options.cellWidth = cw
-        dungeon._options.cellHeight = ch
-        dungeon._options.roomWidth = roomWidth
-        dungeon._options.roomHeight = roomHeight
-        dungeon.rooms = []
-        dungeon.map = dungeon._fillMap 0
-        dungeon._initRooms()
-        dungeon._createRooms()
+      return it("should create some small rooms", function() {
+        const w = 10;
+        const h = 10;
+        const cw = 3;
+        const ch = 3;
+        const roomWidth = [2, 6];
+        const roomHeight = [2, 6];
+        const dungeon = new ROT.Map.Rogue(10, 10);
+        dungeon._width = w;
+        dungeon._height = h;
+        dungeon._options.cellWidth = cw;
+        dungeon._options.cellHeight = ch;
+        dungeon._options.roomWidth = roomWidth;
+        dungeon._options.roomHeight = roomHeight;
+        dungeon.rooms = [];
+        dungeon.map = dungeon._fillMap(0);
+        dungeon._initRooms();
+        return dungeon._createRooms();
+      });
+    });
 
-    describe "_getWallPosition", ->
-      it "should return [undefined, undefined] with a bad direction", ->
-        dungeon = new ROT.Map.Rogue()
-        [rx,ry] = dungeon._getWallPosition {}, 0
-        should(rx).equal undefined
-        should(ry).equal undefined
+    describe("_getWallPosition", () =>
+      it("should return [undefined, undefined] with a bad direction", function() {
+        const dungeon = new ROT.Map.Rogue();
+        const [rx,ry] = Array.from(dungeon._getWallPosition({}, 0));
+        should(rx).equal(undefined);
+        return should(ry).equal(undefined);
+      })
+    );
 
-    describe "_createCorridors", (done) ->
-      almostDone = _.after 3, done
-      it "should call _drawCorridore badly if given a room connected to itself", ->
-        dungeon = new ROT.Map.Rogue()
-        dungeon._getWallPosition = (room, dir) ->
-          almostDone() if (room is undefined) and (dir is undefined)
-        dungeon._drawCorridore = ->
-          almostDone()
-        dungeon._options.cellWidth = 1
-        dungeon._options.cellHeight = 1
-        room =
-          connections: []
-          cellx: 0
+    return describe("_createCorridors", function(done) {
+      const almostDone = _.after(3, done);
+      return it("should call _drawCorridore badly if given a room connected to itself", function() {
+        const dungeon = new ROT.Map.Rogue();
+        dungeon._getWallPosition = function(room, dir) {
+          if ((room === undefined) && (dir === undefined)) { return almostDone(); }
+        };
+        dungeon._drawCorridore = () => almostDone();
+        dungeon._options.cellWidth = 1;
+        dungeon._options.cellHeight = 1;
+        const room = {
+          connections: [],
+          cellx: 0,
           celly: 0
-        room.connections.push [0,0]
-        dungeon.rooms = []
-        dungeon.rooms.push [room]
-        dungeon._createCorridors()
+        };
+        room.connections.push([0,0]);
+        dungeon.rooms = [];
+        dungeon.rooms.push([room]);
+        return dungeon._createCorridors();
+      });
+    });
+  });
+});
 
-#----------------------------------------------------------------------------
-# end of rogueTest.coffee
+//----------------------------------------------------------------------------
+// end of rogueTest.coffee

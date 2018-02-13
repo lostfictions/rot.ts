@@ -1,43 +1,60 @@
-# termColorTest.coffee
-#----------------------------------------------------------------------------
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// termColorTest.coffee
+//----------------------------------------------------------------------------
 
-should = require "should"
-ROT = require "../../lib/rot"
+const should = require("should");
+const ROT = require("../../lib/rot");
 
-describe "term-color", ->
-  it "should export ROT.Display.Term.Color", ->
-    ROT.should.have.property "Display"
-    ROT.Display.should.have.property "Term"
-    ROT.Display.Term.should.have.property "Color"
+describe("term-color", function() {
+  it("should export ROT.Display.Term.Color", function() {
+    ROT.should.have.property("Display");
+    ROT.Display.should.have.property("Term");
+    return ROT.Display.Term.should.have.property("Color");
+  });
 
-  it "should be possible to create a Color object", ->
-    term = new ROT.Display.Term.Color()
-    term.should.be.ok
+  it("should be possible to create a Color object", function() {
+    const term = new ROT.Display.Term.Color();
+    return term.should.be.ok;
+  });
 
-  describe "Color", ->
-    describe "Color", ->
-      it "should cache the provided context", ->
-        context = {}
-        color = new ROT.Display.Term.Color context
-        color._context.should.equal context
+  return describe("Color", function() {
+    describe("Color", () =>
+      it("should cache the provided context", function() {
+        const context = {};
+        const color = new ROT.Display.Term.Color(context);
+        return color._context.should.equal(context);
+      })
+    );
 
-    describe "clearToAnsi", ->
-      it "should do nothing", ->
-        context = {}
-        color = new ROT.Display.Term.Color context
-        color.clearToAnsi()
+    describe("clearToAnsi", () =>
+      it("should do nothing", function() {
+        const context = {};
+        const color = new ROT.Display.Term.Color(context);
+        return color.clearToAnsi();
+      })
+    );
 
-    describe "colorToAnsi", ->
-      it "should do nothing", ->
-        context = {}
-        color = new ROT.Display.Term.Color context
-        color.colorToAnsi()
+    describe("colorToAnsi", () =>
+      it("should do nothing", function() {
+        const context = {};
+        const color = new ROT.Display.Term.Color(context);
+        return color.colorToAnsi();
+      })
+    );
 
-    describe "positionToAnsi", ->
-      it "should do nothing", ->
-        context = {}
-        color = new ROT.Display.Term.Color context
-        color.positionToAnsi()
+    return describe("positionToAnsi", () =>
+      it("should do nothing", function() {
+        const context = {};
+        const color = new ROT.Display.Term.Color(context);
+        return color.positionToAnsi();
+      })
+    );
+  });
+});
 
-#----------------------------------------------------------------------------
-# end of termColorTest.coffee
+//----------------------------------------------------------------------------
+// end of termColorTest.coffee

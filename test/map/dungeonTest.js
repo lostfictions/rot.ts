@@ -1,41 +1,57 @@
-# dungeonTest.coffee
-#----------------------------------------------------------------------------
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// dungeonTest.coffee
+//----------------------------------------------------------------------------
 
-_ = require "underscore"
-should = require "should"
-ROT = require "../../lib/rot"
+const _ = require("underscore");
+const should = require("should");
+const ROT = require("../../lib/rot");
 
-describe "dungeon", ->
-  it "should export ROT.Map.Dungeon", ->
-    ROT.should.have.property "Map"
-    ROT.Map.should.have.property "Dungeon"
+describe("dungeon", function() {
+  it("should export ROT.Map.Dungeon", function() {
+    ROT.should.have.property("Map");
+    return ROT.Map.should.have.property("Dungeon");
+  });
 
-  it "should be possible to create a Dungeon object", ->
-    maze = new ROT.Map.Dungeon()
-    maze.should.be.ok
+  it("should be possible to create a Dungeon object", function() {
+    const maze = new ROT.Map.Dungeon();
+    return maze.should.be.ok;
+  });
 
-  describe "Dungeon", ->
-    it "should extend ROT.Map", ->
-      maze = new ROT.Map.Dungeon()
-      maze.should.be.an.instanceof ROT.Map
-      maze.should.be.an.instanceof ROT.Map.Dungeon
+  return describe("Dungeon", function() {
+    it("should extend ROT.Map", function() {
+      const maze = new ROT.Map.Dungeon();
+      maze.should.be.an.instanceof(ROT.Map);
+      return maze.should.be.an.instanceof(ROT.Map.Dungeon);
+    });
   
-    describe "create", ->
-      it "should not do anything", ->
-        maze = new ROT.Map.Dungeon()
-        maze.create()
+    describe("create", () =>
+      it("should not do anything", function() {
+        const maze = new ROT.Map.Dungeon();
+        return maze.create();
+      })
+    );
 
-    describe "getRooms", ->
-      it "should return an empty array", ->
-        maze = new ROT.Map.Dungeon()
-        rooms = maze.getRooms()
-        rooms.should.be.ok
+    describe("getRooms", () =>
+      it("should return an empty array", function() {
+        const maze = new ROT.Map.Dungeon();
+        const rooms = maze.getRooms();
+        return rooms.should.be.ok;
+      })
+    );
 
-    describe "getCorridors", ->
-      it "should return an empty array", ->
-        maze = new ROT.Map.Dungeon()
-        corridors = maze.getCorridors()
-        corridors.should.be.ok
+    return describe("getCorridors", () =>
+      it("should return an empty array", function() {
+        const maze = new ROT.Map.Dungeon();
+        const corridors = maze.getCorridors();
+        return corridors.should.be.ok;
+      })
+    );
+  });
+});
 
-#----------------------------------------------------------------------------
-# end of dungeonTest.coffee
+//----------------------------------------------------------------------------
+// end of dungeonTest.coffee

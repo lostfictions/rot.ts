@@ -1,69 +1,91 @@
-# diggerTest.coffee
-#----------------------------------------------------------------------------
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// diggerTest.coffee
+//----------------------------------------------------------------------------
 
-_ = require "underscore"
-should = require "should"
-ROT = require "../../lib/rot"
+const _ = require("underscore");
+const should = require("should");
+const ROT = require("../../lib/rot");
 
-describe "digger", ->
-  it "should export ROT.Map.Digger", ->
-    ROT.should.have.property "Map"
-    ROT.Map.should.have.property "Digger"
+describe("digger", function() {
+  it("should export ROT.Map.Digger", function() {
+    ROT.should.have.property("Map");
+    return ROT.Map.should.have.property("Digger");
+  });
 
-  it "should be possible to create a Digger object", ->
-    dungeon = new ROT.Map.Digger()
-    dungeon.should.be.ok
+  it("should be possible to create a Digger object", function() {
+    const dungeon = new ROT.Map.Digger();
+    return dungeon.should.be.ok;
+  });
 
-  describe "Digger", ->
-    it "should extend ROT.Map.Dungeon", ->
-      dungeon = new ROT.Map.Digger()
-      dungeon.should.be.an.instanceof ROT.Map
-      dungeon.should.be.an.instanceof ROT.Map.Dungeon
-      dungeon.should.be.an.instanceof ROT.Map.Digger
+  return describe("Digger", function() {
+    it("should extend ROT.Map.Dungeon", function() {
+      const dungeon = new ROT.Map.Digger();
+      dungeon.should.be.an.instanceof(ROT.Map);
+      dungeon.should.be.an.instanceof(ROT.Map.Dungeon);
+      return dungeon.should.be.an.instanceof(ROT.Map.Digger);
+    });
   
-    describe "create", ->
-      it "should call the callback width x height times", (done) ->
-        { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT
-        almostDone = _.after DEFAULT_WIDTH*DEFAULT_HEIGHT, done
-        dungeon = new ROT.Map.Digger()
-        dungeon.create (x, y, value) ->
-          almostDone()
+    describe("create", function() {
+      it("should call the callback width x height times", function(done) {
+        const { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT;
+        const almostDone = _.after(DEFAULT_WIDTH*DEFAULT_HEIGHT, done);
+        const dungeon = new ROT.Map.Digger();
+        return dungeon.create((x, y, value) => almostDone());
+      });
 
-      it "should accept options like timelimit", ->
-        { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT
-        dungeon = new ROT.Map.Digger DEFAULT_WIDTH, DEFAULT_HEIGHT, MOCK_options =
-          roomWidth: [3, 9]
-          roomHeight: [3, 5]
-          corridorLength: [3, 10]
-          dugPercentage: 0.2
+      it("should accept options like timelimit", function() {
+        let MOCK_options;
+        const { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT;
+        const dungeon = new ROT.Map.Digger(DEFAULT_WIDTH, DEFAULT_HEIGHT, (MOCK_options = {
+          roomWidth: [3, 9],
+          roomHeight: [3, 5],
+          corridorLength: [3, 10],
+          dugPercentage: 0.2,
           timeLimit: 1
-        dungeon.create()
+        })
+        );
+        return dungeon.create();
+      });
 
-      it "should not dig when it has no walls", ->
-        dungeon = new ROT.Map.Digger()
-        dungeon._findWall = -> null
-        dungeon.create()
+      return it("should not dig when it has no walls", function() {
+        const dungeon = new ROT.Map.Digger();
+        dungeon._findWall = () => null;
+        return dungeon.create();
+      });
+    });
 
-    describe "_findWall", ->
-      it "should return null when it can't find any walls", ->
-        dungeon = new ROT.Map.Digger()
-        dungeon._walls = {}
-        wall = dungeon._findWall()
-        should(wall).equal null
+    describe("_findWall", () =>
+      it("should return null when it can't find any walls", function() {
+        const dungeon = new ROT.Map.Digger();
+        dungeon._walls = {};
+        const wall = dungeon._findWall();
+        return should(wall).equal(null);
+      })
+    );
 
-    describe "getRooms", ->
-      it "should not return an empty array", ->
-        dungeon = new ROT.Map.Digger()
-        dungeon.create()
-        rooms = dungeon.getRooms()
-        rooms.length.should.be.greaterThan 1
+    describe("getRooms", () =>
+      it("should not return an empty array", function() {
+        const dungeon = new ROT.Map.Digger();
+        dungeon.create();
+        const rooms = dungeon.getRooms();
+        return rooms.length.should.be.greaterThan(1);
+      })
+    );
 
-    describe "getCorridors", ->
-      it "should not return an empty array", ->
-        dungeon = new ROT.Map.Digger()
-        dungeon.create()
-        corridors = dungeon.getCorridors()
-        corridors.length.should.be.greaterThan 1
+    return describe("getCorridors", () =>
+      it("should not return an empty array", function() {
+        const dungeon = new ROT.Map.Digger();
+        dungeon.create();
+        const corridors = dungeon.getCorridors();
+        return corridors.length.should.be.greaterThan(1);
+      })
+    );
+  });
+});
 
-#----------------------------------------------------------------------------
-# end of diggerTest.coffee
+//----------------------------------------------------------------------------
+// end of diggerTest.coffee

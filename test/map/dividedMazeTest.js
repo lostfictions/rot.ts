@@ -1,32 +1,43 @@
-# dividedMazeTest.coffee
-#----------------------------------------------------------------------------
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// dividedMazeTest.coffee
+//----------------------------------------------------------------------------
 
-_ = require "underscore"
-should = require "should"
-ROT = require "../../lib/rot"
+const _ = require("underscore");
+const should = require("should");
+const ROT = require("../../lib/rot");
 
-describe "dividedmaze", ->
-  it "should export ROT.Map.DividedMaze", ->
-    ROT.should.have.property "Map"
-    ROT.Map.should.have.property "DividedMaze"
+describe("dividedmaze", function() {
+  it("should export ROT.Map.DividedMaze", function() {
+    ROT.should.have.property("Map");
+    return ROT.Map.should.have.property("DividedMaze");
+  });
 
-  it "should be possible to create a DividedMaze object", ->
-    maze = new ROT.Map.DividedMaze()
-    maze.should.be.ok
+  it("should be possible to create a DividedMaze object", function() {
+    const maze = new ROT.Map.DividedMaze();
+    return maze.should.be.ok;
+  });
 
-  describe "DividedMaze", ->
-    it "should extend ROT.Map", ->
-      maze = new ROT.Map.DividedMaze()
-      maze.should.be.an.instanceof ROT.Map
-      maze.should.be.an.instanceof ROT.Map.DividedMaze
+  return describe("DividedMaze", function() {
+    it("should extend ROT.Map", function() {
+      const maze = new ROT.Map.DividedMaze();
+      maze.should.be.an.instanceof(ROT.Map);
+      return maze.should.be.an.instanceof(ROT.Map.DividedMaze);
+    });
   
-    describe "create", ->
-      it "should call the callback width x height times", (done) ->
-        { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT
-        almostDone = _.after DEFAULT_WIDTH*DEFAULT_HEIGHT, done
-        maze = new ROT.Map.DividedMaze()
-        maze.create (x, y, value) ->
-          almostDone()
+    return describe("create", () =>
+      it("should call the callback width x height times", function(done) {
+        const { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT;
+        const almostDone = _.after(DEFAULT_WIDTH*DEFAULT_HEIGHT, done);
+        const maze = new ROT.Map.DividedMaze();
+        return maze.create((x, y, value) => almostDone());
+      })
+    );
+  });
+});
 
-#----------------------------------------------------------------------------
-# end of dividedMazeTest.coffee
+//----------------------------------------------------------------------------
+// end of dividedMazeTest.coffee

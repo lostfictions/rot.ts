@@ -1,24 +1,33 @@
-# noiseTest.coffee
-#----------------------------------------------------------------------------
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// noiseTest.coffee
+//----------------------------------------------------------------------------
 
-_ = require "underscore"
-should = require "should"
-ROT = require "../../lib/rot"
+const _ = require("underscore");
+const should = require("should");
+const ROT = require("../../lib/rot");
 
-describe "noise", ->
-  it "should export ROT.Noise", ->
-    ROT.should.have.property "Noise"
+describe("noise", function() {
+  it("should export ROT.Noise", () => ROT.should.have.property("Noise"));
 
-  it "should be possible to create a Noise object", ->
-    noise = new ROT.Noise()
-    noise.should.have.property "get"
+  it("should be possible to create a Noise object", function() {
+    const noise = new ROT.Noise();
+    return noise.should.have.property("get");
+  });
 
-  describe "Noise", ->
-    describe "get", ->
-      it "should not do anything", ->
-        noise = new ROT.Noise()
-        result = noise.get 5, 5
-        should(result).equal undefined
+  return describe("Noise", () =>
+    describe("get", () =>
+      it("should not do anything", function() {
+        const noise = new ROT.Noise();
+        const result = noise.get(5, 5);
+        return should(result).equal(undefined);
+      })
+    )
+  );
+});
 
-#----------------------------------------------------------------------------
-# end of noiseTest.coffee
+//----------------------------------------------------------------------------
+// end of noiseTest.coffee

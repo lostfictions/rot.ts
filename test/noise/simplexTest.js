@@ -1,34 +1,59 @@
-# simplexTest.coffee
-#----------------------------------------------------------------------------
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS205: Consider reworking code to avoid use of IIFEs
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// simplexTest.coffee
+//----------------------------------------------------------------------------
 
-_ = require "underscore"
-should = require "should"
-ROT = require "../../lib/rot"
+const _ = require("underscore");
+const should = require("should");
+const ROT = require("../../lib/rot");
 
-describe "simplex", ->
-  it "should export ROT.Noise,Simplex", ->
-    ROT.should.have.property "Noise"
-    ROT.Noise.should.have.property "Simplex"
+describe("simplex", function() {
+  it("should export ROT.Noise,Simplex", function() {
+    ROT.should.have.property("Noise");
+    return ROT.Noise.should.have.property("Simplex");
+  });
 
-  it "should be possible to create a Simplex object", ->
-    simplex = new ROT.Noise.Simplex()
-    simplex.should.have.property "get"
+  it("should be possible to create a Simplex object", function() {
+    const simplex = new ROT.Noise.Simplex();
+    return simplex.should.have.property("get");
+  });
 
-  describe "Simplex", ->
-    it "should extend ROT.Noise", ->
-      simplex = new ROT.Noise.Simplex()
-      simplex.should.be.an.instanceof ROT.Noise
+  return describe("Simplex", function() {
+    it("should extend ROT.Noise", function() {
+      const simplex = new ROT.Noise.Simplex();
+      return simplex.should.be.an.instanceof(ROT.Noise);
+    });
   
-    it "should accept a parameter gradients", ->
-      simplex = new ROT.Noise.Simplex 128
+    it("should accept a parameter gradients", function() {
+      let simplex;
+      return simplex = new ROT.Noise.Simplex(128);
+    });
 
-    describe "get", ->
-      it "should provide some smooth random noise", ->
-        simplex = new ROT.Noise.Simplex()
-        for x in [0...16] by 0.25
-          for y in [0...16] by 0.25
-            value = simplex.get x, y
-            value.should.be.within -1, 1
+    return describe("get", () =>
+      it("should provide some smooth random noise", function() {
+        const simplex = new ROT.Noise.Simplex();
+        return (() => {
+          const result = [];
+          for (var x = 0; x < 16; x += 0.25) {
+            result.push((() => {
+              const result1 = [];
+              for (let y = 0; y < 16; y += 0.25) {
+                const value = simplex.get(x, y);
+                result1.push(value.should.be.within(-1, 1));
+              }
+              return result1;
+            })());
+          }
+          return result;
+        })();
+      })
+    );
+  });
+});
 
-#----------------------------------------------------------------------------
-# end of simplexTest.coffee
+//----------------------------------------------------------------------------
+// end of simplexTest.coffee

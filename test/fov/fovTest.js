@@ -1,66 +1,87 @@
-# fovTest.coffee
-#----------------------------------------------------------------------------
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// fovTest.coffee
+//----------------------------------------------------------------------------
 
-_ = require "underscore"
-should = require "should"
-ROT = require "../../lib/rot"
+const _ = require("underscore");
+const should = require("should");
+const ROT = require("../../lib/rot");
 
-describe "fov", ->
-  it "should export ROT.FOV", ->
-    ROT.should.have.property "FOV"
+describe("fov", function() {
+  it("should export ROT.FOV", () => ROT.should.have.property("FOV"));
 
-  it "should be possible to create a FOV object", ->
-    fov = new ROT.FOV()
-    fov.should.have.properties [ "compute", "_getCircle" ]
+  it("should be possible to create a FOV object", function() {
+    const fov = new ROT.FOV();
+    return fov.should.have.properties([ "compute", "_getCircle" ]);
+});
 
-  describe "FOV", ->
-    it "should accept options", ->
-      lightCallback = (x, y) -> false
-      options =
-    		topology: 8
-      fov = new ROT.FOV lightCallback, options
+  return describe("FOV", function() {
+    it("should accept options", function() {
+      let fov;
+      const lightCallback = (x, y) => false;
+      const options =
+    		{topology: 8};
+      return fov = new ROT.FOV(lightCallback, options);
+    });
       
-    describe "compute", ->
-      it "should not do anything", ->
-        fov = new ROT.FOV()
-        result = fov.compute()
-        should(result).equal undefined
+    describe("compute", () =>
+      it("should not do anything", function() {
+        const fov = new ROT.FOV();
+        const result = fov.compute();
+        return should(result).equal(undefined);
+      })
+    );
 
-    describe "_getCircle", ->
-      fov = null
+    return describe("_getCircle", function() {
+      let fov = null;
       
-      describe "topology: 4", ->
-        beforeEach ->
-          lightCallback = (x, y) -> false
-          options =
-            topology: 4
-          fov = new ROT.FOV lightCallback, options
+      describe("topology: 4", function() {
+        beforeEach(function() {
+          const lightCallback = (x, y) => false;
+          const options =
+            {topology: 4};
+          return fov = new ROT.FOV(lightCallback, options);
+        });
 
-        it "should return top4 neighbors", ->
-          result = fov._getCircle 0, 0, 1
-          result.length.should.equal 4
+        return it("should return top4 neighbors", function() {
+          const result = fov._getCircle(0, 0, 1);
+          return result.length.should.equal(4);
+        });
+      });
 
-      describe "topology: 6", ->
-        beforeEach ->
-          lightCallback = (x, y) -> false
-          options =
-            topology: 6
-          fov = new ROT.FOV lightCallback, options
+      describe("topology: 6", function() {
+        beforeEach(function() {
+          const lightCallback = (x, y) => false;
+          const options =
+            {topology: 6};
+          return fov = new ROT.FOV(lightCallback, options);
+        });
 
-        it "should return top6 neighbors", ->
-          result = fov._getCircle 0, 0, 1
-          result.length.should.equal 6
+        return it("should return top6 neighbors", function() {
+          const result = fov._getCircle(0, 0, 1);
+          return result.length.should.equal(6);
+        });
+      });
 
-      describe "topology: 8", ->
-        beforeEach ->
-          lightCallback = (x, y) -> false
-          options =
-            topology: 8
-          fov = new ROT.FOV lightCallback, options
+      return describe("topology: 8", function() {
+        beforeEach(function() {
+          const lightCallback = (x, y) => false;
+          const options =
+            {topology: 8};
+          return fov = new ROT.FOV(lightCallback, options);
+        });
 
-        it "should return top8 neighbors", ->
-          result = fov._getCircle 0, 0, 1
-          result.length.should.equal 8
+        return it("should return top8 neighbors", function() {
+          const result = fov._getCircle(0, 0, 1);
+          return result.length.should.equal(8);
+        });
+      });
+    });
+  });
+});
 
-#----------------------------------------------------------------------------
-# end of fovTest.coffee
+//----------------------------------------------------------------------------
+// end of fovTest.coffee

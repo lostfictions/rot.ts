@@ -1,89 +1,117 @@
-# schedulerSpeedTest.coffee
-#----------------------------------------------------------------------------
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS205: Consider reworking code to avoid use of IIFEs
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// schedulerSpeedTest.coffee
+//----------------------------------------------------------------------------
 
-_ = require "underscore"
-should = require "should"
-ROT = require "../../lib/rot"
+const _ = require("underscore");
+const should = require("should");
+const ROT = require("../../lib/rot");
 
-NO_REPEAT = false
-YES_REPEAT = true
+const NO_REPEAT = false;
+const YES_REPEAT = true;
 
-describe "scheduler", ->
-  it "should export ROT.Scheduler.Speed", ->
-    ROT.should.have.property "Scheduler"
-    ROT.Scheduler.should.have.property "Speed"
+describe("scheduler", function() {
+  it("should export ROT.Scheduler.Speed", function() {
+    ROT.should.have.property("Scheduler");
+    return ROT.Scheduler.should.have.property("Speed");
+  });
     
-  it "should be possible to create a Speed", ->
-    speed = new ROT.Scheduler.Speed()
-    speed.should.be.ok
+  it("should be possible to create a Speed", function() {
+    const speed = new ROT.Scheduler.Speed();
+    return speed.should.be.ok;
+  });
   
-  describe "Speed", ->
-    speed = null
+  return describe("Speed", function() {
+    let speed = null;
     
-    beforeEach ->
-      speed = new ROT.Scheduler.Speed()
-      speed.should.be.ok
+    beforeEach(function() {
+      speed = new ROT.Scheduler.Speed();
+      return speed.should.be.ok;
+    });
 
-    it "should extend Scheduler", ->
-      speed.should.be.an.instanceof ROT.Scheduler
-      speed.should.be.an.instanceof ROT.Scheduler.Speed
+    it("should extend Scheduler", function() {
+      speed.should.be.an.instanceof(ROT.Scheduler);
+      return speed.should.be.an.instanceof(ROT.Scheduler.Speed);
+    });
 
-    describe "add", ->
-      it "should call the getSpeed method on added events", (done) ->
-        MOCK_event =
-          getSpeed: ->
-            done()
-            return 50
-        speed.add MOCK_event, NO_REPEAT
+    describe("add", function() {
+      it("should call the getSpeed method on added events", function(done) {
+        const MOCK_event = {
+          getSpeed() {
+            done();
+            return 50;
+          }
+        };
+        return speed.add(MOCK_event, NO_REPEAT);
+      });
 
-      it "should add the item to the backing queue", (done) ->
-        MOCK_event =
-          getSpeed: -> 50
-        speed._queue.add = -> done()
-        speed.add MOCK_event, NO_REPEAT
+      return it("should add the item to the backing queue", function(done) {
+        const MOCK_event =
+          {getSpeed() { return 50; }};
+        speed._queue.add = () => done();
+        return speed.add(MOCK_event, NO_REPEAT);
+      });
+    });
 
-    describe "next", ->
-      it "should return the next item from the backing queue", ->
-        MOCK_event =
-          getSpeed: -> 50
-        speed.add MOCK_event, NO_REPEAT
-        event = speed.next()
-        event.should.equal MOCK_event
+    return describe("next", function() {
+      it("should return the next item from the backing queue", function() {
+        const MOCK_event =
+          {getSpeed() { return 50; }};
+        speed.add(MOCK_event, NO_REPEAT);
+        const event = speed.next();
+        return event.should.equal(MOCK_event);
+      });
 
-      it "should return repeating events to the queue", (done) ->
-        MOCK_event1 =
-          getSpeed: -> 50
-        MOCK_event2 =
-          getSpeed: -> 50
-        almostDone = _.after 2, done
-        speed.add MOCK_event1, YES_REPEAT
-        speed.add MOCK_event2, YES_REPEAT
-        speed._queue.add = -> almostDone()
-        event = speed.next()
-        event.should.equal MOCK_event1
-        event = speed.next()
-        event.should.equal MOCK_event2
-        speed.next()
+      it("should return repeating events to the queue", function(done) {
+        const MOCK_event1 =
+          {getSpeed() { return 50; }};
+        const MOCK_event2 =
+          {getSpeed() { return 50; }};
+        const almostDone = _.after(2, done);
+        speed.add(MOCK_event1, YES_REPEAT);
+        speed.add(MOCK_event2, YES_REPEAT);
+        speed._queue.add = () => almostDone();
+        let event = speed.next();
+        event.should.equal(MOCK_event1);
+        event = speed.next();
+        event.should.equal(MOCK_event2);
+        return speed.next();
+      });
 
-      it "should respect the speed of the actors", ->
-        littleMac =
-          name: "Mac"
-          getSpeed: -> 100
-        glassJoe = 
-          name: "Joe"
-          getSpeed: -> 25
-        speed.add littleMac, YES_REPEAT
-        speed.add glassJoe, YES_REPEAT
-        speed.next().should.eql littleMac
-        speed.next().should.eql littleMac
-        speed.next().should.eql littleMac
-        speed.next().should.eql glassJoe
-        for i in [0..100]
-          speed.next().should.eql littleMac
-          speed.next().should.eql littleMac
-          speed.next().should.eql littleMac
-          speed.next().should.eql littleMac
-          speed.next().should.eql glassJoe
+      return it("should respect the speed of the actors", function() {
+        const littleMac = {
+          name: "Mac",
+          getSpeed() { return 100; }
+        };
+        const glassJoe = { 
+          name: "Joe",
+          getSpeed() { return 25; }
+        };
+        speed.add(littleMac, YES_REPEAT);
+        speed.add(glassJoe, YES_REPEAT);
+        speed.next().should.eql(littleMac);
+        speed.next().should.eql(littleMac);
+        speed.next().should.eql(littleMac);
+        speed.next().should.eql(glassJoe);
+        return (() => {
+          const result = [];
+          for (let i = 0; i <= 100; i++) {
+            speed.next().should.eql(littleMac);
+            speed.next().should.eql(littleMac);
+            speed.next().should.eql(littleMac);
+            speed.next().should.eql(littleMac);
+            result.push(speed.next().should.eql(glassJoe));
+          }
+          return result;
+        })();
+      });
+    });
+  });
+});
 
-#----------------------------------------------------------------------------
-# end of schedulerSpeedTest.coffee
+//----------------------------------------------------------------------------
+// end of schedulerSpeedTest.coffee

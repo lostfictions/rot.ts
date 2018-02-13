@@ -1,43 +1,54 @@
-# iceyMazeTest.coffee
-#----------------------------------------------------------------------------
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// iceyMazeTest.coffee
+//----------------------------------------------------------------------------
 
-_ = require "underscore"
-should = require "should"
-ROT = require "../../lib/rot"
+const _ = require("underscore");
+const should = require("should");
+const ROT = require("../../lib/rot");
 
-describe "iceymaze", ->
-  it "should export ROT.Map.IceyMaze", ->
-    ROT.should.have.property "Map"
-    ROT.Map.should.have.property "IceyMaze"
+describe("iceymaze", function() {
+  it("should export ROT.Map.IceyMaze", function() {
+    ROT.should.have.property("Map");
+    return ROT.Map.should.have.property("IceyMaze");
+  });
 
-  it "should be possible to create a IceyMaze object", ->
-    maze = new ROT.Map.IceyMaze()
-    maze.should.be.ok
+  it("should be possible to create a IceyMaze object", function() {
+    const maze = new ROT.Map.IceyMaze();
+    return maze.should.be.ok;
+  });
 
-  describe "IceyMaze", ->
-    it "should extend ROT.Map", ->
-      maze = new ROT.Map.IceyMaze()
-      maze.should.be.an.instanceof ROT.Map
-      maze.should.be.an.instanceof ROT.Map.IceyMaze
+  return describe("IceyMaze", function() {
+    it("should extend ROT.Map", function() {
+      const maze = new ROT.Map.IceyMaze();
+      maze.should.be.an.instanceof(ROT.Map);
+      return maze.should.be.an.instanceof(ROT.Map.IceyMaze);
+    });
   
-    describe "create", ->
-      it "should call the callback width x height times", (done) ->
-        almostDone = _.after 11*22, done
-        maze = new ROT.Map.IceyMaze 11, 22
-        maze.create (x, y, value) ->
-          almostDone()
+    return describe("create", function() {
+      it("should call the callback width x height times", function(done) {
+        const almostDone = _.after(11*22, done);
+        const maze = new ROT.Map.IceyMaze(11, 22);
+        return maze.create((x, y, value) => almostDone());
+      });
 
-      it "should create an even sized maze", (done) ->
-        almostDone = _.after 22*11, done
-        maze = new ROT.Map.IceyMaze 22, 11
-        maze.create (x, y, value) ->
-          almostDone()
+      it("should create an even sized maze", function(done) {
+        const almostDone = _.after(22*11, done);
+        const maze = new ROT.Map.IceyMaze(22, 11);
+        return maze.create((x, y, value) => almostDone());
+      });
 
-      it "should allow regularity to be specified", (done) ->
-        almostDone = _.after 22*11, done
-        maze = new ROT.Map.IceyMaze 22, 11, 5
-        maze.create (x, y, value) ->
-          almostDone()
+      return it("should allow regularity to be specified", function(done) {
+        const almostDone = _.after(22*11, done);
+        const maze = new ROT.Map.IceyMaze(22, 11, 5);
+        return maze.create((x, y, value) => almostDone());
+      });
+    });
+  });
+});
 
-#----------------------------------------------------------------------------
-# end of iceyMazeTest.coffee
+//----------------------------------------------------------------------------
+// end of iceyMazeTest.coffee

@@ -1,41 +1,55 @@
-# mapTest.coffee
-#----------------------------------------------------------------------------
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// mapTest.coffee
+//----------------------------------------------------------------------------
 
-should = require 'should'
-ROT = require '../../lib/rot'
+const should = require('should');
+const ROT = require('../../lib/rot');
 
-describe 'map', ->
-  it 'should export ROT.Map', ->
-    ROT.should.have.property 'Map'
+describe('map', function() {
+  it('should export ROT.Map', () => ROT.should.have.property('Map'));
 
-  it 'should be possible to create a Map object', ->
-    map = new ROT.Map()
-    map.should.be.ok
+  it('should be possible to create a Map object', function() {
+    const map = new ROT.Map();
+    return map.should.be.ok;
+  });
     
-  describe 'Map', ->
-    describe 'Map', ->
-      it "should use default size if not provided", ->
-        map = new ROT.Map()
-        map._width.should.equal ROT.DEFAULT_WIDTH
-        map._height.should.equal ROT.DEFAULT_HEIGHT
+  return describe('Map', function() {
+    describe('Map', function() {
+      it("should use default size if not provided", function() {
+        const map = new ROT.Map();
+        map._width.should.equal(ROT.DEFAULT_WIDTH);
+        return map._height.should.equal(ROT.DEFAULT_HEIGHT);
+      });
 
-      it "should use size if provided", ->
-        map = new ROT.Map 42, 69
-        map._width.should.equal 42
-        map._height.should.equal 69
+      return it("should use size if provided", function() {
+        const map = new ROT.Map(42, 69);
+        map._width.should.equal(42);
+        return map._height.should.equal(69);
+      });
+    });
 
-    describe 'create', ->
-      it "should do nothing", ->
-        map = new ROT.Map()
-        map.create()
+    describe('create', () =>
+      it("should do nothing", function() {
+        const map = new ROT.Map();
+        return map.create();
+      })
+    );
 
-    describe '_fillMap', ->
-      it "should return a row-major two-dimensional array of the map", ->
-        map = new ROT.Map 5, 7
-        array = map._fillMap "X"
-        array.length.should.equal 5
-        array[0].length.should.equal 7
-        array[0][0].should.equal "X"
+    return describe('_fillMap', () =>
+      it("should return a row-major two-dimensional array of the map", function() {
+        const map = new ROT.Map(5, 7);
+        const array = map._fillMap("X");
+        array.length.should.equal(5);
+        array[0].length.should.equal(7);
+        return array[0][0].should.equal("X");
+      })
+    );
+  });
+});
 
-#----------------------------------------------------------------------------
-# end of mapTest.coffee
+//----------------------------------------------------------------------------
+// end of mapTest.coffee

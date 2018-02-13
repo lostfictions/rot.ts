@@ -1,23 +1,28 @@
-# rafTest.coffee
-#----------------------------------------------------------------------------
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// rafTest.coffee
+//----------------------------------------------------------------------------
 
-should = require 'should'
-ROT = require '../../lib/rot'
+const should = require('should');
+const ROT = require('../../lib/rot');
 
-describe 'raf', ->
-  it 'should provide a global requestAnimationFrame method', ->
-    global.should.have.property 'requestAnimationFrame'
+describe('raf', function() {
+  it('should provide a global requestAnimationFrame method', () => global.should.have.property('requestAnimationFrame'));
     
-  xit 'should provide a global cancelAnimationFrame method', ->
-    global.should.have.property 'cancelAnimationFrame'
+  xit('should provide a global cancelAnimationFrame method', () => global.should.have.property('cancelAnimationFrame'));
     
-  it 'should call the provided callback', (done) ->
-    global.requestAnimationFrame ->
-      done()
+  it('should call the provided callback', done =>
+    global.requestAnimationFrame(() => done())
+  );
     
-  xit 'should cancel the provided callback', ->
-    requestId = global.requestAnimationFrame -> throw new Error "BAD!"
-    global.cancelAnimationFrame requestId
+  return xit('should cancel the provided callback', function() {
+    const requestId = global.requestAnimationFrame(function() { throw new Error("BAD!"); });
+    return global.cancelAnimationFrame(requestId);
+  });
+});
 
-#----------------------------------------------------------------------------
-# end of rafTest.coffee
+//----------------------------------------------------------------------------
+// end of rafTest.coffee

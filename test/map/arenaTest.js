@@ -1,47 +1,61 @@
-# arenaTest.coffee
-#----------------------------------------------------------------------------
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// arenaTest.coffee
+//----------------------------------------------------------------------------
 
-_ = require "underscore"
-should = require "should"
-ROT = require "../../lib/rot"
+const _ = require("underscore");
+const should = require("should");
+const ROT = require("../../lib/rot");
 
-describe "arena", ->
-  it "should export ROT.Map.Arena", ->
-    ROT.should.have.property "Map"
-    ROT.Map.should.have.property "Arena"
+describe("arena", function() {
+  it("should export ROT.Map.Arena", function() {
+    ROT.should.have.property("Map");
+    return ROT.Map.should.have.property("Arena");
+  });
 
-  it "should be possible to create an Arena object", ->
-    arena = new ROT.Map.Arena()
-    arena.should.be.ok
+  it("should be possible to create an Arena object", function() {
+    const arena = new ROT.Map.Arena();
+    return arena.should.be.ok;
+  });
 
-  describe "Arena", ->
-    it "should extend ROT.Map", ->
-      arena = new ROT.Map.Arena()
-      arena.should.be.an.instanceof ROT.Map
-      arena.should.be.an.instanceof ROT.Map.Arena
+  return describe("Arena", function() {
+    it("should extend ROT.Map", function() {
+      const arena = new ROT.Map.Arena();
+      arena.should.be.an.instanceof(ROT.Map);
+      return arena.should.be.an.instanceof(ROT.Map.Arena);
+    });
   
-    describe "create", ->
-      it "should call the callback width x height times", (done) ->
-        { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT
-        almostDone = _.after DEFAULT_WIDTH*DEFAULT_HEIGHT, done
-        arena = new ROT.Map.Arena()
-        arena.create (x, y, value) ->
-          almostDone()
+    return describe("create", function() {
+      it("should call the callback width x height times", function(done) {
+        const { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT;
+        const almostDone = _.after(DEFAULT_WIDTH*DEFAULT_HEIGHT, done);
+        const arena = new ROT.Map.Arena();
+        return arena.create((x, y, value) => almostDone());
+      });
 
-      it "should create a fully dug room", ->
-        { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT
-        arena = new ROT.Map.Arena()
-        arena.create (x, y, value) ->
-          if (x is 0)
-            throw new Error "bad mojo" if value isnt 1
-          else if (y is 0)
-            throw new Error "bad mojo" if value isnt 1
-          else if (x is DEFAULT_WIDTH-1)
-            throw new Error "bad mojo" if value isnt 1
-          else if (y is DEFAULT_HEIGHT-1)
-            throw new Error "bad mojo" if value isnt 1
-          else
-            throw new Error "bad mojo" if value isnt 0
+      return it("should create a fully dug room", function() {
+        const { DEFAULT_WIDTH, DEFAULT_HEIGHT } = ROT;
+        const arena = new ROT.Map.Arena();
+        return arena.create(function(x, y, value) {
+          if (x === 0) {
+            if (value !== 1) { throw new Error("bad mojo"); }
+          } else if (y === 0) {
+            if (value !== 1) { throw new Error("bad mojo"); }
+          } else if (x === (DEFAULT_WIDTH-1)) {
+            if (value !== 1) { throw new Error("bad mojo"); }
+          } else if (y === (DEFAULT_HEIGHT-1)) {
+            if (value !== 1) { throw new Error("bad mojo"); }
+          } else {
+            if (value !== 0) { throw new Error("bad mojo"); }
+          }
+        });
+      });
+    });
+  });
+});
 
-#----------------------------------------------------------------------------
-# end of arenaTest.coffee
+//----------------------------------------------------------------------------
+// end of arenaTest.coffee

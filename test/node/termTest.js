@@ -1,187 +1,233 @@
-# termTest.coffee
-#----------------------------------------------------------------------------
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// termTest.coffee
+//----------------------------------------------------------------------------
 
-should = require "should"
-ROT = require "../../lib/rot"
+const should = require("should");
+const ROT = require("../../lib/rot");
 
-describe "term", ->
-  it "should export ROT.Display.Term", ->
-    ROT.should.have.property "Display"
-    ROT.Display.should.have.property "Term"
+describe("term", function() {
+  it("should export ROT.Display.Term", function() {
+    ROT.should.have.property("Display");
+    return ROT.Display.should.have.property("Term");
+  });
 
-  it "should be possible to create a Term object", ->
-    term = new ROT.Display.Term()
-    term.should.be.ok
+  it("should be possible to create a Term object", function() {
+    const term = new ROT.Display.Term();
+    return term.should.be.ok;
+  });
 
-  describe "Term", ->
-    TERM_WIDTH = 80
-    TERM_HEIGHT = 25
+  return describe("Term", function() {
+    const TERM_WIDTH = 80;
+    const TERM_HEIGHT = 25;
     
-    oldColumns = process.stdout.columns
-    oldRows = process.stdout.rows
+    const oldColumns = process.stdout.columns;
+    const oldRows = process.stdout.rows;
     
-    beforeEach ->
-      process.stdout.columns = TERM_WIDTH
-      process.stdout.rows = TERM_HEIGHT
+    beforeEach(function() {
+      process.stdout.columns = TERM_WIDTH;
+      return process.stdout.rows = TERM_HEIGHT;
+    });
 
-    afterEach ->
-      process.stdout.columns = oldColumns
-      process.stdout.rows = oldRows
+    afterEach(function() {
+      process.stdout.columns = oldColumns;
+      return process.stdout.rows = oldRows;
+    });
 
-    it "should extend ROT.Display.Backend", ->
-      term = new ROT.Display.Term()
-      term.should.be.an.instanceof ROT.Display.Backend
-      term.should.be.an.instanceof ROT.Display.Term
+    it("should extend ROT.Display.Backend", function() {
+      const term = new ROT.Display.Term();
+      term.should.be.an.instanceof(ROT.Display.Backend);
+      return term.should.be.an.instanceof(ROT.Display.Term);
+    });
 
-    describe "compute", ->
-      it "should cache the provided options", ->
-        context = {}
-        options =
-          width: TERM_WIDTH
-          height: TERM_HEIGHT
+    describe("compute", () =>
+      it("should cache the provided options", function() {
+        const context = {};
+        const options = {
+          width: TERM_WIDTH,
+          height: TERM_HEIGHT,
           termColor: "xterm"
-        term = new ROT.Display.Term context
-        term.compute options
-        term._options.should.equal options
+        };
+        const term = new ROT.Display.Term(context);
+        term.compute(options);
+        return term._options.should.equal(options);
+      })
+    );
 
-    describe "draw", ->
-      it "should draw at the appropriate location", ->
-        context = {}
-        options =
-          width: TERM_WIDTH
-          height: TERM_HEIGHT
+    describe("draw", function() {
+      it("should draw at the appropriate location", function() {
+        const context = {};
+        const options = {
+          width: TERM_WIDTH,
+          height: TERM_HEIGHT,
           termColor: "xterm"
-        term = new ROT.Display.Term context
-        term.compute options
-        term.draw [5, 5, "@", "#fff", "#000"]
+        };
+        const term = new ROT.Display.Term(context);
+        term.compute(options);
+        return term.draw([5, 5, "@", "#fff", "#000"]);
+    });
 
-      it "should bail if off the left side", ->
-        context = {}
-        options =
-          width: TERM_WIDTH
-          height: TERM_HEIGHT
+      it("should bail if off the left side", function() {
+        const context = {};
+        const options = {
+          width: TERM_WIDTH,
+          height: TERM_HEIGHT,
           termColor: "xterm"
-        term = new ROT.Display.Term context
-        term.compute options
-        term.draw [-2, 5, "@", "#fff", "#000"]
+        };
+        const term = new ROT.Display.Term(context);
+        term.compute(options);
+        return term.draw([-2, 5, "@", "#fff", "#000"]);
+    });
 
-      it "should bail if off the right side", ->
-        context = {}
-        options =
-          width: TERM_WIDTH
-          height: TERM_HEIGHT
+      it("should bail if off the right side", function() {
+        const context = {};
+        const options = {
+          width: TERM_WIDTH,
+          height: TERM_HEIGHT,
           termColor: "xterm"
-        term = new ROT.Display.Term context
-        term.compute options
-        term.draw [(TERM_WIDTH + 2), 5, "@", "#fff", "#000"]
+        };
+        const term = new ROT.Display.Term(context);
+        term.compute(options);
+        return term.draw([(TERM_WIDTH + 2), 5, "@", "#fff", "#000"]);
+    });
 
-      it "should bail if off the top side", ->
-        context = {}
-        options =
-          width: TERM_WIDTH
-          height: TERM_HEIGHT
+      it("should bail if off the top side", function() {
+        const context = {};
+        const options = {
+          width: TERM_WIDTH,
+          height: TERM_HEIGHT,
           termColor: "xterm"
-        term = new ROT.Display.Term context
-        term.compute options
-        term.draw [5, -5, "@", "#fff", "#000"]
+        };
+        const term = new ROT.Display.Term(context);
+        term.compute(options);
+        return term.draw([5, -5, "@", "#fff", "#000"]);
+    });
 
-      it "should bail if off the bottom side", ->
-        context = {}
-        options =
-          width: TERM_WIDTH
-          height: TERM_HEIGHT
+      it("should bail if off the bottom side", function() {
+        const context = {};
+        const options = {
+          width: TERM_WIDTH,
+          height: TERM_HEIGHT,
           termColor: "xterm"
-        term = new ROT.Display.Term context
-        term.compute options
-        term.draw [5, (TERM_HEIGHT + 5), "@", "#fff", "#000"]
+        };
+        const term = new ROT.Display.Term(context);
+        term.compute(options);
+        return term.draw([5, (TERM_HEIGHT + 5), "@", "#fff", "#000"]);
+    });
 
-      it "should not move the cursor if it doesn't need to", ->
-        context = {}
-        options =
-          width: TERM_WIDTH
-          height: TERM_HEIGHT
+      it("should not move the cursor if it doesn't need to", function() {
+        const context = {};
+        const options = {
+          width: TERM_WIDTH,
+          height: TERM_HEIGHT,
           termColor: "xterm"
-        term = new ROT.Display.Term context
-        term.compute options
-        term.draw [5, 5, "@", "#fff", "#000"]
-        term.draw [6, 5, "@", "#fff", "#000"]
+        };
+        const term = new ROT.Display.Term(context);
+        term.compute(options);
+        term.draw([5, 5, "@", "#fff", "#000"]);
+        return term.draw([6, 5, "@", "#fff", "#000"]);
+    });
 
-      it "should provide a space if we're clearing", ->
-        context = {}
-        options =
-          width: TERM_WIDTH
-          height: TERM_HEIGHT
+      it("should provide a space if we're clearing", function() {
+        const context = {};
+        const options = {
+          width: TERM_WIDTH,
+          height: TERM_HEIGHT,
           termColor: "xterm"
-        term = new ROT.Display.Term context
-        term.compute options
-        term.draw [5, 5, undefined, "#fff", "#000"], true
+        };
+        const term = new ROT.Display.Term(context);
+        term.compute(options);
+        return term.draw([5, 5, undefined, "#fff", "#000"], true);
+      });
 
-      it "should use a character when clearing, if provided", ->
-        context = {}
-        options =
-          width: TERM_WIDTH
-          height: TERM_HEIGHT
+      it("should use a character when clearing, if provided", function() {
+        const context = {};
+        const options = {
+          width: TERM_WIDTH,
+          height: TERM_HEIGHT,
           termColor: "xterm"
-        term = new ROT.Display.Term context
-        term.compute options
-        term.draw [5, 5, "#", "#fff", "#000"], true
+        };
+        const term = new ROT.Display.Term(context);
+        term.compute(options);
+        return term.draw([5, 5, "#", "#fff", "#000"], true);
+      });
 
-      it "should bail if not provided with a character and not clearing", ->
-        context = {}
-        options =
-          width: TERM_WIDTH
-          height: TERM_HEIGHT
+      it("should bail if not provided with a character and not clearing", function() {
+        const context = {};
+        const options = {
+          width: TERM_WIDTH,
+          height: TERM_HEIGHT,
           termColor: "xterm"
-        term = new ROT.Display.Term context
-        term.compute options
-        term.draw [5, 5, undefined, "#fff", "#000"], false
+        };
+        const term = new ROT.Display.Term(context);
+        term.compute(options);
+        return term.draw([5, 5, undefined, "#fff", "#000"], false);
+      });
 
-      it "should wrap to the next line, if needed", ->
-        context = {}
-        options =
-          width: TERM_WIDTH
-          height: TERM_HEIGHT
+      return it("should wrap to the next line, if needed", function() {
+        const context = {};
+        const options = {
+          width: TERM_WIDTH,
+          height: TERM_HEIGHT,
           termColor: "xterm"
-        term = new ROT.Display.Term context
-        term.compute options
-        term.draw [79, 5, "@", "#fff", "#000"], true
-        term._cx.should.equal 0
-        term._cy.should.equal 6
+        };
+        const term = new ROT.Display.Term(context);
+        term.compute(options);
+        term.draw([79, 5, "@", "#fff", "#000"], true);
+        term._cx.should.equal(0);
+        return term._cy.should.equal(6);
+      });
+    });
 
-    describe "computeSize", ->
-      it "should wrap to the next line, if needed", ->
-        context = {}
-        options =
-          width: TERM_WIDTH
-          height: TERM_HEIGHT
+    describe("computeSize", () =>
+      it("should wrap to the next line, if needed", function() {
+        const context = {};
+        const options = {
+          width: TERM_WIDTH,
+          height: TERM_HEIGHT,
           termColor: "xterm"
-        term = new ROT.Display.Term context
-        term.compute options
-        [width, height] = term.computeSize()
-        width.should.equal TERM_WIDTH
-        height.should.equal TERM_HEIGHT
+        };
+        const term = new ROT.Display.Term(context);
+        term.compute(options);
+        const [width, height] = Array.from(term.computeSize());
+        width.should.equal(TERM_WIDTH);
+        return height.should.equal(TERM_HEIGHT);
+      })
+    );
 
-    describe "computeFontSize", ->
-      it "should always return 12", ->
-        context = {}
-        options =
-          width: TERM_WIDTH
-          height: TERM_HEIGHT
+    describe("computeFontSize", () =>
+      it("should always return 12", function() {
+        const context = {};
+        const options = {
+          width: TERM_WIDTH,
+          height: TERM_HEIGHT,
           termColor: "xterm"
-        term = new ROT.Display.Term context
-        term.compute options
-        term.computeFontSize().should.equal 12
+        };
+        const term = new ROT.Display.Term(context);
+        term.compute(options);
+        return term.computeFontSize().should.equal(12);
+      })
+    );
 
-    describe "eventToPosition", ->
-      it "should always return what it was given", ->
-        context = {}
-        options =
-          width: TERM_WIDTH
-          height: TERM_HEIGHT
+    return describe("eventToPosition", () =>
+      it("should always return what it was given", function() {
+        const context = {};
+        const options = {
+          width: TERM_WIDTH,
+          height: TERM_HEIGHT,
           termColor: "xterm"
-        term = new ROT.Display.Term context
-        term.compute options
-        term.eventToPosition(13,19).should.eql [13, 19]
+        };
+        const term = new ROT.Display.Term(context);
+        term.compute(options);
+        return term.eventToPosition(13,19).should.eql([13, 19]);
+    })
+  );
+});
+});
 
-#----------------------------------------------------------------------------
-# end of termTest.coffee
+//----------------------------------------------------------------------------
+// end of termTest.coffee
