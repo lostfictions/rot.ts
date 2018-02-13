@@ -1,5 +1,5 @@
 import { Map, CreateCallback } from "./map";
-import { defaultRNG } from "../rng";
+import { rng } from "../rng";
 
 /**
  * Maze generator - Eller's algorithm
@@ -32,13 +32,13 @@ export class EllerMaze extends Map {
         map[x][y] = 0;
 
         /* right connection */
-        if (i !== L[i + 1] && defaultRNG.getUniform() > rand) {
+        if (i !== L[i + 1] && rng.getUniform() > rand) {
           this._addToList(i, L, R);
           map[x + 1][y] = 0;
         }
 
         /* bottom connection */
-        if (i !== L[i] && defaultRNG.getUniform() > rand) {
+        if (i !== L[i] && rng.getUniform() > rand) {
           /* remove connection */
           this._removeFromList(i, L, R);
         } else {
@@ -56,7 +56,7 @@ export class EllerMaze extends Map {
       map[x][y] = 0;
 
       /* right connection */
-      if (i !== L[i + 1] && (i === L[i] || defaultRNG.getUniform() > rand)) {
+      if (i !== L[i + 1] && (i === L[i] || rng.getUniform() > rand)) {
         /* dig right also if the cell is separated, so it gets connected to the rest of maze */
         this._addToList(i, L, R);
         map[x + 1][y] = 0;

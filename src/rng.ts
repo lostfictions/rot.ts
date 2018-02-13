@@ -151,4 +151,4 @@ export class RNG {
   }
 }
 
-export const defaultRNG = new RNG();
+export const rng = new RNG();

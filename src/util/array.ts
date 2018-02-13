@@ -1,4 +1,4 @@
-import { defaultRNG } from "../rng";
+import { rng } from "../rng";
 
 /**
  * Return a random item in an array.
@@ -8,7 +8,7 @@ export function random<T>(arr: T[]): T | null {
   if (!arr.length) {
     return null;
   }
-  return arr[Math.floor(defaultRNG.getUniform() * arr.length)];
+  return arr[Math.floor(rng.getUniform() * arr.length)];
 }
 
 /**

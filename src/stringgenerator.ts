@@ -1,4 +1,4 @@
-import { defaultRNG } from "./rng";
+import { rng } from "./rng";
 
 export interface StringGeneratorOptions {
   /** Use word mode? */
@@ -143,7 +143,7 @@ export class StringGenerator {
       available = data;
     }
 
-    return defaultRNG.getWeightedValue(available);
+    return rng.getWeightedValue(available);
   }
 
   private backoff(context: string[]): string[] {

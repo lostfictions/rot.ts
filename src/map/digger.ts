@@ -3,7 +3,7 @@ import { Room, Corridor, FeatureConstructor } from "./features";
 import { CreateCallback } from "./map";
 import { randomInArray } from "../util";
 import { DIRS } from "../constants";
-import { defaultRNG } from "../rng";
+import { rng } from "../rng";
 
 export interface DiggerOptions {
   /** room minimum and maximum width */
@@ -200,7 +200,7 @@ export class Digger extends Dungeon {
    */
   protected _tryFeature(x: number, y: number, dx: number, dy: number): boolean {
     const featureType: FeatureConstructor =
-      defaultRNG.getWeightedValue(this._features) === "Room" ? Room : Corridor;
+      rng.getWeightedValue(this._features) === "Room" ? Room : Corridor;
 
     const feature = featureType.createRandomAt(x, y, dx, dy, this._options);
 

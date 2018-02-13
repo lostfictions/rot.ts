@@ -1,6 +1,6 @@
 import { Map, CreateCallback } from "./map";
 import { DEFAULT_WIDTH, DEFAULT_HEIGHT, DIRS } from "../constants";
-import { defaultRNG } from "../rng";
+import { rng } from "../rng";
 import { shuffleArray } from "../util";
 
 export interface RogueOptions {
@@ -120,8 +120,8 @@ export class Rogue extends Map {
 
   protected _connectRooms(): void {
     // pick random starting grid
-    let cgx = defaultRNG.getUniformInt(0, this._options.cellWidth - 1);
-    let cgy = defaultRNG.getUniformInt(0, this._options.cellHeight - 1);
+    let cgx = rng.getUniformInt(0, this._options.cellWidth - 1);
+    let cgy = rng.getUniformInt(0, this._options.cellHeight - 1);
 
     let dirToCheck: number[];
     // find unconnected neighbour cells
@@ -255,8 +255,8 @@ export class Rogue extends Map {
 
         const roomWidth = this._options["roomWidth"];
         const roomHeight = this._options["roomHeight"];
-        let roomw = defaultRNG.getUniformInt(roomWidth[0], roomWidth[1]);
-        let roomh = defaultRNG.getUniformInt(roomHeight[0], roomHeight[1]);
+        let roomw = rng.getUniformInt(roomWidth[0], roomWidth[1]);
+        let roomh = rng.getUniformInt(roomHeight[0], roomHeight[1]);
 
         if (j > 0) {
           const otherRoom = this.rooms[i][j - 1];
@@ -272,8 +272,8 @@ export class Rogue extends Map {
           }
         }
 
-        let sxOffset = Math.round(defaultRNG.getUniformInt(0, cwp - roomw) / 2);
-        let syOffset = Math.round(defaultRNG.getUniformInt(0, chp - roomh) / 2);
+        let sxOffset = Math.round(rng.getUniformInt(0, cwp - roomw) / 2);
+        let syOffset = Math.round(rng.getUniformInt(0, chp - roomh) / 2);
 
         while (sx + sxOffset + roomw >= this._width) {
           if (sxOffset) {
@@ -315,7 +315,7 @@ export class Rogue extends Map {
     switch (dir) {
       case 1:
       case 3:
-        rx = defaultRNG.getUniformInt(
+        rx = rng.getUniformInt(
           room["x"] + 1,
           room["x"] + room["width"] - 2
         );
@@ -330,7 +330,7 @@ export class Rogue extends Map {
         break;
       case 2:
       case 4:
-        ry = defaultRNG.getUniformInt(
+        ry = rng.getUniformInt(
           room["y"] + 1,
           room["y"] + room["height"] - 2
         );
@@ -359,7 +359,7 @@ export class Rogue extends Map {
     const xAbs = Math.abs(xOffset);
     const yAbs = Math.abs(yOffset);
 
-    const percent = defaultRNG.getUniform(); // used to split the move at different places along the long axis
+    const percent = rng.getUniform(); // used to split the move at different places along the long axis
     const firstHalf = percent;
     const secondHalf = 1 - percent;
 

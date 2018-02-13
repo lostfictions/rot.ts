@@ -1,5 +1,5 @@
 import { Map, CreateCallback } from "./map";
-import { defaultRNG } from "../rng";
+import { rng } from "../rng";
 import { DIRS } from "../constants";
 
 export interface CellularOptions {
@@ -45,7 +45,7 @@ export class Cellular extends Map {
   randomize(probability: number): void {
     for (let i = 0; i < this._width; i++) {
       for (let j = 0; j < this._height; j++) {
-        this._map[i][j] = defaultRNG.getUniform() < probability ? 1 : 0;
+        this._map[i][j] = rng.getUniform() < probability ? 1 : 0;
       }
     }
   }
@@ -154,7 +154,7 @@ export class Cellular extends Map {
     }
 
     const start =
-      allFreeSpace[defaultRNG.getUniformInt(0, allFreeSpace.length - 1)];
+      allFreeSpace[rng.getUniformInt(0, allFreeSpace.length - 1)];
 
     const key = this._pointKey(start);
     const connected: { [point: string]: [number, number] } = {};
@@ -218,11 +218,11 @@ export class Cellular extends Map {
     for (let i = 0; i < 5; i++) {
       if (connectedKeys.length < notConnectedKeys.length) {
         const keys = connectedKeys;
-        to = connected[keys[defaultRNG.getUniformInt(0, keys.length - 1)]];
+        to = connected[keys[rng.getUniformInt(0, keys.length - 1)]];
         from = this._getClosest(to, notConnected);
       } else {
         const keys = notConnectedKeys;
-        from = notConnected[keys[defaultRNG.getUniformInt(0, keys.length - 1)]];
+        from = notConnected[keys[rng.getUniformInt(0, keys.length - 1)]];
         to = this._getClosest(from, connected);
       }
 

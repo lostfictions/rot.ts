@@ -1,5 +1,5 @@
 import { Map, CreateCallback } from "./map";
-import { defaultRNG } from "../rng";
+import { rng } from "../rng";
 
 /**
  * Icey's Maze generator
@@ -26,8 +26,8 @@ export class IceyMaze extends Map {
 
     const dirs: [number, number][] = [[0, 0], [0, 0], [0, 0], [0, 0]];
     do {
-      let cx = 1 + 2 * Math.floor(defaultRNG.getUniform() * (width - 1) / 2);
-      let cy = 1 + 2 * Math.floor(defaultRNG.getUniform() * (height - 1) / 2);
+      let cx = 1 + 2 * Math.floor(rng.getUniform() * (width - 1) / 2);
+      let cy = 1 + 2 * Math.floor(rng.getUniform() * (height - 1) / 2);
 
       if (!done) {
         map[cx][cy] = 0;
@@ -39,7 +39,7 @@ export class IceyMaze extends Map {
         let blocked = false;
         do {
           if (
-            Math.floor(defaultRNG.getUniform() * (this._regularity + 1)) === 0
+            Math.floor(rng.getUniform() * (this._regularity + 1)) === 0
           ) {
             this._randomize(dirs);
           }
@@ -75,7 +75,7 @@ export class IceyMaze extends Map {
       dirs[i][1] = 0;
     }
 
-    switch (Math.floor(defaultRNG.getUniform() * 4)) {
+    switch (Math.floor(rng.getUniform() * 4)) {
       case 0:
         dirs[0][0] = -1;
         dirs[1][0] = 1;

@@ -1,4 +1,4 @@
-import { defaultRNG } from "./rng";
+import { rng } from "./rng";
 import { clamp, lpad } from "./util";
 
 /**
@@ -199,10 +199,10 @@ export class Color {
     let bDiff: number;
 
     if (typeof diff === "number") {
-      const dev = Math.round(defaultRNG.getNormal(0, diff));
+      const dev = Math.round(rng.getNormal(0, diff));
       [rDiff, gDiff, bDiff] = [dev, dev, dev];
     } else {
-      [rDiff, gDiff, bDiff] = diff.map(d => defaultRNG.getNormal(0, d));
+      [rDiff, gDiff, bDiff] = diff.map(d => rng.getNormal(0, d));
     }
 
     return new Color(this.r + rDiff, this.g + gDiff, this.b + bDiff);

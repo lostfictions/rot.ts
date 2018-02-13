@@ -1,4 +1,4 @@
-import { defaultRNG } from "../rng";
+import { rng } from "../rng";
 
 export type DigCallback = (x: number, y: number, value: number) => any;
 export type TestPositionCallback = (x: number, y: number) => boolean;
@@ -90,30 +90,30 @@ export class Room implements Feature {
   ): Room {
     const [wMin, wMax] = options.roomWidth;
     const [hMin, hMax] = options.roomHeight;
-    const width = defaultRNG.getUniformInt(wMin, wMax);
-    const height = defaultRNG.getUniformInt(hMin, hMax);
+    const width = rng.getUniformInt(wMin, wMax);
+    const height = rng.getUniformInt(hMin, hMax);
 
     if (dx === 1) {
       /* to the right */
-      const y2 = y - Math.floor(defaultRNG.getUniform() * height);
+      const y2 = y - Math.floor(rng.getUniform() * height);
       return new this(x + 1, y2, x + width, y2 + height - 1, x, y);
     }
 
     if (dx === -1) {
       /* to the left */
-      const y2 = y - Math.floor(defaultRNG.getUniform() * height);
+      const y2 = y - Math.floor(rng.getUniform() * height);
       return new this(x - width, y2, x - 1, y2 + height - 1, x, y);
     }
 
     if (dy === 1) {
       /* to the bottom */
-      const x2 = x - Math.floor(defaultRNG.getUniform() * width);
+      const x2 = x - Math.floor(rng.getUniform() * width);
       return new this(x2, y + 1, x2 + width - 1, y + height, x, y);
     }
 
     if (dy === -1) {
       /* to the top */
-      const x2 = x - Math.floor(defaultRNG.getUniform() * width);
+      const x2 = x - Math.floor(rng.getUniform() * width);
       return new this(x2, y - height, x2 + width - 1, y - 1, x, y);
     }
 
@@ -129,13 +129,13 @@ export class Room implements Feature {
     options: RoomCreateOptions
   ): Room {
     const [wMin, wMax] = options.roomWidth;
-    const width = defaultRNG.getUniformInt(wMin, wMax);
+    const width = rng.getUniformInt(wMin, wMax);
 
     const [hMin, hMax] = options.roomHeight;
-    const height = defaultRNG.getUniformInt(hMin, hMax);
+    const height = rng.getUniformInt(hMin, hMax);
 
-    const x1 = cx - Math.floor(defaultRNG.getUniform() * width);
-    const y1 = cy - Math.floor(defaultRNG.getUniform() * height);
+    const x1 = cx - Math.floor(rng.getUniform() * width);
+    const y1 = cy - Math.floor(rng.getUniform() * height);
     const x2 = x1 + width - 1;
     const y2 = y1 + height - 1;
 
@@ -151,16 +151,16 @@ export class Room implements Feature {
     options: RoomCreateOptions
   ): Room {
     const [wMin, wMax] = options.roomWidth;
-    const width = defaultRNG.getUniformInt(wMin, wMax);
+    const width = rng.getUniformInt(wMin, wMax);
 
     const [hMin, hMax] = options.roomHeight;
-    const height = defaultRNG.getUniformInt(hMin, hMax);
+    const height = rng.getUniformInt(hMin, hMax);
 
     const left = availWidth - width - 1;
     const top = availHeight - height - 1;
 
-    const x1 = 1 + Math.floor(defaultRNG.getUniform() * left);
-    const y1 = 1 + Math.floor(defaultRNG.getUniform() * top);
+    const x1 = 1 + Math.floor(rng.getUniform() * left);
+    const y1 = 1 + Math.floor(rng.getUniform() * top);
     const x2 = x1 + width - 1;
     const y2 = y1 + height - 1;
 
@@ -294,7 +294,7 @@ export class Corridor implements Feature {
     options: CorridorCreateOptions
   ): Corridor {
     const [min, max] = options.corridorLength;
-    const length = defaultRNG.getUniformInt(min, max);
+    const length = rng.getUniformInt(min, max);
 
     return new this(x, y, x + dx * length, y + dy * length);
   }

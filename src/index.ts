@@ -4,7 +4,7 @@ export { Color } from "./color";
 export { Actor, Engine } from "./engine";
 export { EventQueue } from "./eventqueue";
 export { DEFAULT_WIDTH, DEFAULT_HEIGHT, DIRS, KEYS } from "./constants";
-export { RNG, defaultRNG } from "./rng";
+export { RNG, rng } from "./rng";
 
 export { Display } from "./display/display";
 
