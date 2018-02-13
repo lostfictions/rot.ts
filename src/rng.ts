@@ -113,13 +113,13 @@ export class RNG {
     for (const [key, weight] of entries) {
       part += weight;
       if (random < part) {
-        return key;
+        return key as K;
       }
     }
 
     // If by some floating-point annoyance we have
     // random >= total, just return the last id.
-    return entries[entries.length][0];
+    return entries[entries.length][0] as K;
   }
 
   /**
