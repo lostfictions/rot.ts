@@ -4,7 +4,7 @@ export type DigCallback = (x: number, y: number, value: number) => any;
 export type TestPositionCallback = (x: number, y: number) => boolean;
 
 export interface FeatureConstructor {
-  new (): Feature;
+  new (...args: any[]): Feature;
   createRandomAt(
     x: number,
     y: number,
@@ -18,7 +18,10 @@ export interface FeatureConstructor {
  * Dungeon feature; has own .create() method
  */
 export interface Feature {
-  isValid(canBeDugCallback: TestPositionCallback): boolean;
+  isValid(
+    isWallCallback: TestPositionCallback,
+    canBeDugCallback: TestPositionCallback
+  ): boolean;
   create(digCallback: DigCallback): void;
   debug(): void;
 }
@@ -268,8 +271,11 @@ export interface CorridorCreateOptions {
 export class Corridor implements Feature {
   protected readonly _startX: number;
   protected readonly _startY: number;
-  protected readonly _endX: number;
-  protected readonly _endY: number;
+
+  // _endX and _endY should probably also be readonly, but currently `isValid`
+  // may change their value.
+  protected _endX: number;
+  protected _endY: number;
   protected _endsWithAWall = true;
 
   constructor(startX: number, startY: number, endX: number, endY: number) {

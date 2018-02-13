@@ -26,6 +26,8 @@ export interface RogueOptions {
 export class Rogue extends Map {
   protected _options: RogueOptions;
 
+  protected _map: number[][] = [[]];
+
   constructor(
     width = DEFAULT_WIDTH,
     height = DEFAULT_HEIGHT,
@@ -33,11 +35,7 @@ export class Rogue extends Map {
   ) {
     super(width, height);
 
-    this._options = {
-      cellWidth: 3,
-      cellHeight: 3,
-      ...options
-    } as any;
+    this._options = { cellWidth: 3, cellHeight: 3, ...options } as any;
 
     /*
      * Set the room sizes according to the over-all width of the map,

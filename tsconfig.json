@@ -9,7 +9,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "declaration": true,
-    "allowJs": false
+    "allowJs": false,
+    "lib": ["esnext"]
   },
   "include": ["./src/**/*"]
 }

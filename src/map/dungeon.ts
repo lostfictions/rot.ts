@@ -6,8 +6,8 @@ import { Room, Corridor } from "./features";
  * @augments ROT.Map
  */
 export abstract class Dungeon extends Map {
-  private _rooms: Room[] = []; /* list of all rooms */
-  private _corridors: Corridor[] = [];
+  protected _rooms: Room[] = []; /* list of all rooms */
+  protected _corridors: Corridor[] = [];
 
   /**
    * Get all generated rooms

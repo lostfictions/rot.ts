@@ -97,7 +97,9 @@ export class RNG {
    * @param data key=whatever, value=weight (relative probability)
    * @returns whatever
    */
-  getWeightedValue(data: { [key: string]: number }): string {
+  getWeightedValue<T extends { [key: string]: number }, K extends keyof T>(
+    data: T
+  ): K {
     const entries = Object.entries(data);
 
     let total = 0;
