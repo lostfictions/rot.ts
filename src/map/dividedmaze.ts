@@ -15,13 +15,13 @@ export class DividedMaze extends Map {
     const w = this._width;
     const h = this._height;
 
-    const _map = [];
+    const map: number[][] = [];
 
     for (let i = 0; i < w; i++) {
-      _map.push([]);
+      map.push([]);
       for (let j = 0; j < h; j++) {
         const border = i === 0 || j === 0 || i + 1 === w || j + 1 === h;
-        _map[i].push(border ? 1 : 0);
+        map[i].push(border ? 1 : 0);
       }
     }
 
@@ -30,14 +30,14 @@ export class DividedMaze extends Map {
 
     for (let i = 0; i < w; i++) {
       for (let j = 0; j < h; j++) {
-        callback(i, j, _map[i][j]);
+        callback(i, j, map[i][j]);
       }
     }
   }
 
   protected _process(): void {
     while (this._stack.length) {
-      const room = this._stack.shift();
+      const room = this._stack.shift()!;
       this._partitionRoom(room);
     }
   }
@@ -66,8 +66,8 @@ export class DividedMaze extends Map {
       return;
     }
 
-    const x = randomInArray(availX);
-    const y = randomInArray(availY);
+    const x = randomInArray(availX)!;
+    const y = randomInArray(availY)!;
 
     this._map[x][y] = 1;
 
@@ -101,13 +101,13 @@ export class DividedMaze extends Map {
       bottomWall.push([x, j]);
     }
 
-    const solid = randomInArray(walls);
+    const solid = randomInArray(walls)!;
     for (const wall of walls) {
       if (wall === solid) {
         continue;
       }
 
-      const hole = randomInArray(wall);
+      const hole = randomInArray(wall)!;
       this._map[hole[0]][hole[1]] = 0;
     }
 
