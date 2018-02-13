@@ -17,6 +17,16 @@ export interface RogueOptions {
   roomHeight: [number, number];
 }
 
+export interface RoomData {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  connections: any[];
+  cellx: number;
+  celly: number;
+}
+
 /**
  * @author hyakugei
  *
@@ -26,7 +36,9 @@ export interface RogueOptions {
 export class Rogue extends Map {
   protected _options: RogueOptions;
 
-  protected _map: number[][] = [[]];
+  protected map: number[][] = [[]];
+  protected rooms: RoomData[][] = [];
+  protected connectedCells: [number, number][] = [];
 
   constructor(
     width = DEFAULT_WIDTH,
@@ -63,7 +75,7 @@ export class Rogue extends Map {
     this._initRooms();
     this._connectRooms();
     this._connectUnconnectedRooms();
-    this._createRandomRoomConnections();
+    // this._createRandomRoomConnections();
     this._createRooms();
     this._createCorridors();
 
@@ -76,7 +88,7 @@ export class Rogue extends Map {
     }
   }
 
-  protected _calculateRoomSize(size, cell): [number, number] {
+  protected _calculateRoomSize(size: number, cell: number): [number, number] {
     let max = Math.floor(size / cell * 0.8);
     let min = Math.floor(size / cell * 0.25);
     if (min < 2) {
@@ -108,27 +120,21 @@ export class Rogue extends Map {
 
   protected _connectRooms(): void {
     // pick random starting grid
-    const cgx = defaultRNG.getUniformInt(0, this._options.cellWidth - 1);
-    const cgy = defaultRNG.getUniformInt(0, this._options.cellHeight - 1);
+    let cgx = defaultRNG.getUniformInt(0, this._options.cellWidth - 1);
+    let cgy = defaultRNG.getUniformInt(0, this._options.cellHeight - 1);
 
-    var idx;
-    var ncgx;
-    var ncgy;
-
-    var found = false;
-    var room;
-    var otherRoom;
-
-    // find  unconnected neighbour cells
+    let dirToCheck: number[];
+    // find unconnected neighbour cells
     do {
-      const dirToCheck = shuffleArray([0, 2, 4, 6]);
+      dirToCheck = shuffleArray([0, 2, 4, 6]);
 
+      let found = false;
       do {
         found = false;
-        idx = dirToCheck.pop();
+        const idx = dirToCheck.pop()!;
 
-        ncgx = cgx + ROT.DIRS[8][idx][0];
-        ncgy = cgy + ROT.DIRS[8][idx][1];
+        const ncgx = cgx + DIRS[8][idx][0];
+        const ncgy = cgy + DIRS[8][idx][1];
 
         if (ncgx < 0 || ncgx >= this._options.cellWidth) {
           continue;
@@ -137,21 +143,21 @@ export class Rogue extends Map {
           continue;
         }
 
-        room = this.rooms[cgx][cgy];
+        const room = this.rooms[cgx][cgy];
 
         if (room["connections"].length > 0) {
           // as long as this room doesn't already coonect to me, we are ok with it.
           if (
-            room["connections"][0][0] == ncgx &&
-            room["connections"][0][1] == ncgy
+            room["connections"][0][0] === ncgx &&
+            room["connections"][0][1] === ncgy
           ) {
             break;
           }
         }
 
-        otherRoom = this.rooms[ncgx][ncgy];
+        const otherRoom = this.rooms[ncgx][ncgy];
 
-        if (otherRoom["connections"].length == 0) {
+        if (otherRoom["connections"].length === 0) {
           otherRoom["connections"].push([cgx, cgy]);
 
           this.connectedCells.push([ncgx, ncgy]);
@@ -159,7 +165,7 @@ export class Rogue extends Map {
           cgy = ncgy;
           found = true;
         }
-      } while (dirToCheck.length > 0 && found == false);
+      } while (dirToCheck.length > 0 && found === false);
     } while (dirToCheck.length > 0);
   }
 
@@ -170,24 +176,22 @@ export class Rogue extends Map {
     const cw = this._options.cellWidth;
     const ch = this._options.cellHeight;
 
-    this.connectedCells = this.connectedCells.randomize();
-    var room;
-    var otherRoom;
-    var validRoom;
+    this.connectedCells = shuffleArray(this.connectedCells);
 
-    for (var i = 0; i < this._options.cellWidth; i++) {
-      for (var j = 0; j < this._options.cellHeight; j++) {
-        room = this.rooms[i][j];
+    for (let i = 0; i < this._options.cellWidth; i++) {
+      for (let j = 0; j < this._options.cellHeight; j++) {
+        const room = this.rooms[i][j];
 
         if (room["connections"].length === 0) {
           const directions = shuffleArray([0, 2, 4, 6]);
 
-          validRoom = false;
-
+          let validRoom = false;
+          // prettier-ignore
+          let otherRoom!: RoomData
           do {
-            var dirIdx = directions.pop();
-            var newI = i + DIRS[8][dirIdx][0];
-            var newJ = j + DIRS[8][dirIdx][1];
+            const dirIdx = directions.pop()!;
+            const newI = i + DIRS[8][dirIdx][0];
+            const newJ = j + DIRS[8][dirIdx][1];
 
             if (newI < 0 || newI >= cw || newJ < 0 || newJ >= ch) {
               continue;
@@ -197,15 +201,12 @@ export class Rogue extends Map {
 
             validRoom = true;
 
-            if (otherRoom["connections"].length == 0) {
+            if (otherRoom["connections"].length === 0) {
               break;
             }
 
-            for (var k = 0; k < otherRoom["connections"].length; k++) {
-              if (
-                otherRoom["connections"][k][0] == i &&
-                otherRoom["connections"][k][1] == j
-              ) {
+            for (const c of otherRoom["connections"]) {
+              if (c[0] === i && c[1] === j) {
                 validRoom = false;
                 break;
               }
@@ -214,7 +215,7 @@ export class Rogue extends Map {
             if (validRoom) {
               break;
             }
-          } while (directions.length);
+          } while (directions.length > 0);
 
           if (validRoom) {
             room["connections"].push([otherRoom["cellx"], otherRoom["celly"]]);
@@ -226,7 +227,7 @@ export class Rogue extends Map {
     }
   }
 
-  protected _createRandomRoomConnections(connections: any): never {
+  protected _createRandomRoomConnections(_connections?: any): never {
     // Empty for now.
     throw new Error("Not yet implemented");
   }
@@ -234,56 +235,47 @@ export class Rogue extends Map {
   protected _createRooms(): void {
     // Create Rooms
 
-    const w = this._width;
-    const h = this._height;
-
     const cw = this._options.cellWidth;
     const ch = this._options.cellHeight;
 
     const cwp = Math.floor(this._width / cw);
     const chp = Math.floor(this._height / ch);
 
-    var roomw;
-    var roomh;
-    const roomWidth = this._options["roomWidth"];
-    const roomHeight = this._options["roomHeight"];
-    var sx;
-    var sy;
-    var otherRoom;
+    for (let i = 0; i < cw; i++) {
+      for (let j = 0; j < ch; j++) {
+        let sx = cwp * i;
+        let sy = chp * j;
 
-    for (var i = 0; i < cw; i++) {
-      for (var j = 0; j < ch; j++) {
-        sx = cwp * i;
-        sy = chp * j;
-
-        if (sx == 0) {
+        if (sx === 0) {
           sx = 1;
         }
-        if (sy == 0) {
+        if (sy === 0) {
           sy = 1;
         }
 
-        roomw = defaultRNG.getUniformInt(roomWidth[0], roomWidth[1]);
-        roomh = defaultRNG.getUniformInt(roomHeight[0], roomHeight[1]);
+        const roomWidth = this._options["roomWidth"];
+        const roomHeight = this._options["roomHeight"];
+        let roomw = defaultRNG.getUniformInt(roomWidth[0], roomWidth[1]);
+        let roomh = defaultRNG.getUniformInt(roomHeight[0], roomHeight[1]);
 
         if (j > 0) {
-          otherRoom = this.rooms[i][j - 1];
+          const otherRoom = this.rooms[i][j - 1];
           while (sy - (otherRoom["y"] + otherRoom["height"]) < 3) {
             sy++;
           }
         }
 
         if (i > 0) {
-          otherRoom = this.rooms[i - 1][j];
+          const otherRoom = this.rooms[i - 1][j];
           while (sx - (otherRoom["x"] + otherRoom["width"]) < 3) {
             sx++;
           }
         }
 
-        var sxOffset = Math.round(defaultRNG.getUniformInt(0, cwp - roomw) / 2);
-        var syOffset = Math.round(defaultRNG.getUniformInt(0, chp - roomh) / 2);
+        let sxOffset = Math.round(defaultRNG.getUniformInt(0, cwp - roomw) / 2);
+        let syOffset = Math.round(defaultRNG.getUniformInt(0, chp - roomh) / 2);
 
-        while (sx + sxOffset + roomw >= w) {
+        while (sx + sxOffset + roomw >= this._width) {
           if (sxOffset) {
             sxOffset--;
           } else {
@@ -291,7 +283,7 @@ export class Rogue extends Map {
           }
         }
 
-        while (sy + syOffset + roomh >= h) {
+        while (sy + syOffset + roomh >= this._height) {
           if (syOffset) {
             syOffset--;
           } else {
@@ -307,8 +299,8 @@ export class Rogue extends Map {
         this.rooms[i][j]["width"] = roomw;
         this.rooms[i][j]["height"] = roomh;
 
-        for (var ii = sx; ii < sx + roomw; ii++) {
-          for (var jj = sy; jj < sy + roomh; jj++) {
+        for (let ii = sx; ii < sx + roomw; ii++) {
+          for (let jj = sy; jj < sy + roomh; jj++) {
             this.map[ii][jj] = 0;
           }
         }
@@ -316,98 +308,92 @@ export class Rogue extends Map {
     }
   }
 
-  protected _getWallPosition(aRoom, aDirection): [number, number] {
-    var rx;
-    var ry;
-    var door;
-
-    if (aDirection == 1 || aDirection == 3) {
-      rx = defaultRNG.getUniformInt(
-        aRoom["x"] + 1,
-        aRoom["x"] + aRoom["width"] - 2
-      );
-      if (aDirection == 1) {
-        ry = aRoom["y"] - 2;
-        door = ry + 1;
-      } else {
-        ry = aRoom["y"] + aRoom["height"] + 1;
-        door = ry - 1;
-      }
-
-      this.map[rx][door] = 0; // i'm not setting a specific 'door' tile value right now, just empty space.
-    } else if (aDirection == 2 || aDirection == 4) {
-      ry = defaultRNG.getUniformInt(
-        aRoom["y"] + 1,
-        aRoom["y"] + aRoom["height"] - 2
-      );
-      if (aDirection == 2) {
-        rx = aRoom["x"] + aRoom["width"] + 1;
-        door = rx - 1;
-      } else {
-        rx = aRoom["x"] - 2;
-        door = rx + 1;
-      }
-
-      this.map[door][ry] = 0; // i'm not setting a specific 'door' tile value right now, just empty space.
+  protected _getWallPosition(room: RoomData, dir: number): [number, number] {
+    let rx: number;
+    let ry: number;
+    let door: number;
+    switch (dir) {
+      case 1:
+      case 3:
+        rx = defaultRNG.getUniformInt(
+          room["x"] + 1,
+          room["x"] + room["width"] - 2
+        );
+        if (dir === 1) {
+          ry = room["y"] - 2;
+          door = ry + 1;
+        } else {
+          ry = room["y"] + room["height"] + 1;
+          door = ry - 1;
+        }
+        this.map[rx][door] = 0; // i'm not setting a specific 'door' tile value right now, just empty space.
+        break;
+      case 2:
+      case 4:
+        ry = defaultRNG.getUniformInt(
+          room["y"] + 1,
+          room["y"] + room["height"] - 2
+        );
+        if (dir === 2) {
+          rx = room["x"] + room["width"] + 1;
+          door = rx - 1;
+        } else {
+          rx = room["x"] - 2;
+          door = rx + 1;
+        }
+        this.map[door][ry] = 0; // i'm not setting a specific 'door' tile value right now, just empty space.
+        break;
+      default:
+        throw new Error("Unexpected value!");
     }
     return [rx, ry];
   }
 
-  /***
-   * @param startPosition a 2 element array
-   * @param endPosition a 2 element array
-   */
-  _drawCorridor(startPosition, endPosition) {
-    var xOffset = endPosition[0] - startPosition[0];
-    var yOffset = endPosition[1] - startPosition[1];
+  protected _drawCorridor(
+    startPosition: [number, number],
+    endPosition: [number, number]
+  ): void {
+    const xOffset = endPosition[0] - startPosition[0];
+    const yOffset = endPosition[1] - startPosition[1];
 
-    var xpos = startPosition[0];
-    var ypos = startPosition[1];
+    const xAbs = Math.abs(xOffset);
+    const yAbs = Math.abs(yOffset);
 
-    var tempDist;
-    var xDir;
-    var yDir;
+    const percent = defaultRNG.getUniform(); // used to split the move at different places along the long axis
+    const firstHalf = percent;
+    const secondHalf = 1 - percent;
 
-    var move; // 2 element array, element 0 is the direction, element 1 is the total value to move.
-    var moves = []; // a list of 2 element arrays
+    const xDir = xOffset > 0 ? 2 : 6;
+    const yDir = yOffset > 0 ? 4 : 0;
 
-    var xAbs = Math.abs(xOffset);
-    var yAbs = Math.abs(yOffset);
-
-    var percent = defaultRNG.getUniform(); // used to split the move at different places along the long axis
-    var firstHalf = percent;
-    var secondHalf = 1 - percent;
-
-    xDir = xOffset > 0 ? 2 : 6;
-    yDir = yOffset > 0 ? 4 : 0;
-
+    // list of tuples: element 0 is the direction, element 1 is the total value
+    // to move.
+    const moves: [number, number][] = [];
     if (xAbs < yAbs) {
       // move firstHalf of the y offset
-      tempDist = Math.ceil(yAbs * firstHalf);
-      moves.push([yDir, tempDist]);
+      moves.push([yDir, Math.ceil(yAbs * firstHalf)]);
       // move all the x offset
       moves.push([xDir, xAbs]);
       // move sendHalf of the  y offset
-      tempDist = Math.floor(yAbs * secondHalf);
-      moves.push([yDir, tempDist]);
+      moves.push([yDir, Math.floor(yAbs * secondHalf)]);
     } else {
       //  move firstHalf of the x offset
-      tempDist = Math.ceil(xAbs * firstHalf);
-      moves.push([xDir, tempDist]);
+      moves.push([xDir, Math.ceil(xAbs * firstHalf)]);
       // move all the y offset
       moves.push([yDir, yAbs]);
       // move secondHalf of the x offset.
-      tempDist = Math.floor(xAbs * secondHalf);
-      moves.push([xDir, tempDist]);
+      moves.push([xDir, Math.floor(xAbs * secondHalf)]);
     }
 
+    let xpos = startPosition[0];
+    let ypos = startPosition[1];
     this.map[xpos][ypos] = 0;
 
     while (moves.length > 0) {
-      move = moves.pop();
+      const move = moves.pop()!;
       while (move[1] > 0) {
-        xpos += ROT.DIRS[8][move[0]][0];
-        ypos += ROT.DIRS[8][move[0]][1];
+        xpos += DIRS[8][move[0]][0];
+        ypos += DIRS[8][move[0]][1];
         this.map[xpos][ypos] = 0;
         move[1] = move[1] - 1;
       }
@@ -417,25 +403,18 @@ export class Rogue extends Map {
   protected _createCorridors(): void {
     // Draw Corridors between connected rooms
 
-    var cw = this._options.cellWidth;
-    var ch = this._options.cellHeight;
-    var room;
-    var connection;
-    var otherRoom;
-    var wall;
-    var otherWall;
+    const cw = this._options.cellWidth;
+    const ch = this._options.cellHeight;
 
-    for (var i = 0; i < cw; i++) {
-      for (var j = 0; j < ch; j++) {
-        room = this.rooms[i][j];
+    for (let i = 0; i < cw; i++) {
+      for (let j = 0; j < ch; j++) {
+        const room = this.rooms[i][j];
 
-        for (var k = 0; k < room["connections"].length; k++) {
-          connection = room["connections"][k];
+        for (const connection of room["connections"]) {
+          const otherRoom = this.rooms[connection[0]][connection[1]];
 
-          otherRoom = this.rooms[connection[0]][connection[1]];
-
-          // figure out what wall our corridor will start one.
-          // figure out what wall our corridor will end on.
+          let wall: number;
+          let otherWall: number;
           if (otherRoom["cellx"] > room["cellx"]) {
             wall = 2;
             otherWall = 4;
@@ -451,8 +430,8 @@ export class Rogue extends Map {
           }
 
           this._drawCorridor(
-            this._getWallPosition(room, wall),
-            this._getWallPosition(otherRoom, otherWall)
+            this._getWallPosition(room, wall!),
+            this._getWallPosition(otherRoom, otherWall!)
           );
         }
       }

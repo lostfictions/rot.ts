@@ -10,7 +10,7 @@
     "noUnusedParameters": true,
     "declaration": true,
     "allowJs": false,
-    "lib": ["esnext"]
+    "lib": ["esnext", "dom"]
   },
   "include": ["./src/**/*"]
 }
