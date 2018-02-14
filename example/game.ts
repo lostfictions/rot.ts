@@ -1,4 +1,4 @@
-import { SpeedScheduler, Engine, Display } from "..";
+import { SpeedScheduler, Engine, Display } from "rot";
 
 import { Being } from "./being";
 import { Player } from "./player";

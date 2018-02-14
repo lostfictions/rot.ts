@@ -1,4 +1,4 @@
-import { SpeedActor, Actor } from "../";
+import { SpeedActor, Actor } from "rot";
 
 import { Entity } from "./entity";
 import { XY } from "./xy";

@@ -1,4 +1,4 @@
-import { Display } from "..";
+import { Display } from "rot";
 import { XY } from "./xy";
 
 export interface TextBufferOptions {

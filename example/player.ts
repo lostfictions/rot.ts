@@ -1,4 +1,4 @@
-import { KEYS, DIRS } from "..";
+import { KEYS, DIRS } from "rot";
 import { Being } from "./being";
 import { XY } from "./xy";
 

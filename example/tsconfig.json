@@ -2,17 +2,19 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
-    "outDir": "dist",
-    "strict": true,
     "sourceMap": true,
-    "rootDirs": ["./src"],
+    // "outDir": "./",
+    "importHelpers": true,
+    "downlevelIteration": true,
+    "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "declaration": true,
-    "allowJs": false,
-    "lib": ["esnext", "dom"]
-  },
-  "include": ["./src/**/*"]
+    "lib": ["esnext", "dom"],
+    "baseUrl": ".",
+    "paths": {
+      "rot": ["../src/"]
+    }
+  }
 }

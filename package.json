@@ -1,5 +1,5 @@
 {
-  "name": "rot.ts",
+  "name": "roguekit",
   "version": "0.0.1",
   "description": "roguelike toolkit",
   "main": "dist/index.js",
