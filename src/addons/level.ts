@@ -21,7 +21,7 @@ export class Level {
   setEntity(entity: Entity, xy: XY): void {
     /* FIXME remove from old position, draw */
     if (entity.level === this) {
-      const oldXY = entity.xy;
+      const oldXY = entity.xy!;
       delete this._beings[oldXY.toString()];
       if (game.level === this) {
         game.draw(oldXY);
@@ -32,7 +32,12 @@ export class Level {
     entity.setPosition(xy, this);
 
     /* FIXME set new position, draw */
-    this._beings[xy.toString()] = entity;
+    if (entity instanceof Being) {
+      this._beings[xy.toString()] = entity;
+    } else {
+      this._map[xy.toString()] = entity;
+    }
+
     if (game.level === this) {
       game.draw(xy);
       game.textBuffer.write("An entity moves to " + xy + ".");
@@ -45,8 +50,7 @@ export class Level {
     );
   }
 
-  getBeings() {
-    /* FIXME list of all beings */
-    return this._beings;
+  getBeings(): Being[] {
+    return Object.values(this._beings);
   }
 }

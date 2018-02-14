@@ -1,5 +1,6 @@
 import { SpeedScheduler, Engine, Display } from "..";
 
+import { Being } from "./being";
 import { Player } from "./player";
 import { Level } from "./level";
 import { TextBuffer } from "./textbuffer";
@@ -7,7 +8,7 @@ import { XY } from "./xy";
 
 export class Game {
   // prettier-ignore
-  scheduler!: SpeedScheduler;
+  scheduler!: SpeedScheduler<Being>;
 
   // prettier-ignore
   engine!: Engine;
@@ -50,7 +51,6 @@ export class Game {
         );
 
         this.engine.start();
-        break;
     }
   }
 

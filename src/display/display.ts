@@ -186,11 +186,11 @@ export class Display {
   draw(
     x: number,
     y: number,
-    ch: string | string[],
-    fg?: string,
-    bg?: string
+    ch?: string | string[] | null,
+    fg?: string | null,
+    bg?: string | null
   ): void {
-    this._data[x + "," + y] = [
+    this._data[`${x},${y}`] = [
       x,
       y,
       ch,
@@ -206,7 +206,7 @@ export class Display {
     if (!this._dirty) {
       this._dirty = {};
     }
-    this._dirty[x + "," + y] = true;
+    this._dirty[`${x},${y}`] = true;
   }
 
   /**
@@ -308,13 +308,13 @@ export class Display {
         this._context.canvas.height
       );
 
-      for (var id in this._data) {
+      for (const id of Object.keys(this._data)) {
         /* redraw cached data */
         this._draw(id, false);
       }
     } else {
       /* draw only dirty */
-      for (var key in this._dirty) {
+      for (const key of Object.keys(this._dirty)) {
         this._draw(key, true);
       }
     }

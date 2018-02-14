@@ -8,4 +8,10 @@
  * - the background color as a hex string
  *
  */
-export type DrawData = [number, number, string | string[], string, string];
+export type DrawData = [
+  number,
+  number,
+  string | string[] | undefined | null,
+  string | undefined | null,
+  string | undefined | null
+];

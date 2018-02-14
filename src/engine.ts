@@ -4,11 +4,11 @@ export interface Actor {
   act(): { then?: (onResolve: () => any) => any } | void;
 }
 
-export class Engine {
-  private readonly scheduler: Scheduler<Actor>;
+export class Engine<T extends Actor = Actor> {
+  private readonly scheduler: Scheduler<T>;
   private _lock = 1;
 
-  constructor(scheduler: Scheduler<Actor>) {
+  constructor(scheduler: Scheduler<T>) {
     this.scheduler = scheduler;
   }
 

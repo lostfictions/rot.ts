@@ -1,4 +1,4 @@
-import { SpeedActor } from "../";
+import { SpeedActor, Actor } from "../";
 
 import { Entity } from "./entity";
 import { XY } from "./xy";
@@ -6,7 +6,7 @@ import { Level } from "./level";
 
 import { game } from "./game";
 
-export abstract class Being extends Entity implements SpeedActor {
+export abstract class Being extends Entity implements SpeedActor, Actor {
   protected _speed = 100;
   protected _hp = 10;
 
