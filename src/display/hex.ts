@@ -9,7 +9,9 @@ export class HexBackend implements DisplayBackend {
   protected _spacingX = 0;
   protected _spacingY = 0;
   protected _hexSize = 0;
-  protected _options: DisplayOptions;
+
+  // prettier-ignore
+  protected _options!: DisplayOptions;
 
   constructor(context: CanvasRenderingContext2D) {
     this._context = context;
@@ -46,13 +48,16 @@ export class HexBackend implements DisplayBackend {
   draw(data: DrawData, clearBefore: boolean): void {
     const [x, y, ch, fg, bg] = data;
 
-    var px = [(x + 1) * this._spacingX, y * this._spacingY + this._hexSize];
+    const px = [(x + 1) * this._spacingX, y * this._spacingY + this._hexSize];
+
     if (this._options.transpose) {
       px.reverse();
     }
 
     if (clearBefore) {
-      this._context.fillStyle = bg;
+      if (bg) {
+        this._context.fillStyle = bg;
+      }
       this._fill(px[0], px[1]);
     }
 
@@ -60,51 +65,53 @@ export class HexBackend implements DisplayBackend {
       return;
     }
 
-    this._context.fillStyle = fg;
+    if (fg) {
+      this._context.fillStyle = fg;
+    }
 
-    var chars = [].concat(ch);
-    for (var i = 0; i < chars.length; i++) {
-      this._context.fillText(chars[i], px[0], Math.ceil(px[1]));
+    const chars = ([] as string[]).concat(ch);
+    for (const char of chars) {
+      this._context.fillText(char, px[0], Math.ceil(px[1]));
     }
   }
 
   computeSize(availWidth: number, availHeight: number): [number, number] {
+    let w = availWidth;
+    let h = availHeight;
     if (this._options.transpose) {
-      availWidth += availHeight;
-      availHeight = availWidth - availHeight;
-      availWidth -= availHeight;
+      w += h;
+      h = w - h;
+      w -= h;
     }
 
-    var width = Math.floor(availWidth / this._spacingX) - 1;
-    var height = Math.floor(
-      (availHeight - 2 * this._hexSize) / this._spacingY + 1
-    );
+    const width = Math.floor(w / this._spacingX) - 1;
+    const height = Math.floor((h - 2 * this._hexSize) / this._spacingY + 1);
     return [width, height];
   }
 
   computeFontSize(availWidth: number, availHeight: number): number {
+    let w = availWidth;
+    let h = availHeight;
     if (this._options.transpose) {
-      availWidth += availHeight;
-      availHeight = availWidth - availHeight;
-      availWidth -= availHeight;
+      w += h;
+      h = w - h;
+      w -= h;
     }
 
-    var hexSizeWidth =
-      2 * availWidth / ((this._options.width + 1) * Math.sqrt(3)) - 1;
-    var hexSizeHeight = availHeight / (2 + 1.5 * (this._options.height - 1));
-    var hexSize = Math.min(hexSizeWidth, hexSizeHeight);
-
     /* compute char ratio */
-    var oldFont = this._context.font;
+    const oldFont = this._context.font;
     this._context.font = "100px " + this._options.fontFamily;
-    var width = Math.ceil(this._context.measureText("W").width);
+    const width = Math.ceil(this._context.measureText("W").width);
     this._context.font = oldFont;
-    var ratio = width / 100;
+    const ratio = width / 100;
 
-    hexSize = Math.floor(hexSize) + 1; /* closest larger hexSize */
+    const hexSizeWidth = 2 * w / ((this._options.width + 1) * Math.sqrt(3)) - 1;
+    const hexSizeHeight = h / (2 + 1.5 * (this._options.height - 1));
+    /* closest larger hexSize */
+    const hexSize = Math.floor(Math.min(hexSizeWidth, hexSizeHeight)) + 1;
 
     /* FIXME char size computation does not respect transposed hexes */
-    var fontSize =
+    const fontSize =
       2 * hexSize / (this._options.spacing * (1 + ratio / Math.sqrt(3)));
 
     /* closest smaller fontSize */
@@ -112,15 +119,18 @@ export class HexBackend implements DisplayBackend {
   }
 
   eventToPosition(x: number, y: number): [number, number] {
+    // tslint:disable:no-parameter-reassignment
+    let nodeSize: number;
     if (this._options.transpose) {
       x += y;
       y = x - y;
       x -= y;
-      var nodeSize = this._context.canvas.width;
+      nodeSize = this._context.canvas.width;
     } else {
-      var nodeSize = this._context.canvas.height;
+      nodeSize = this._context.canvas.height;
     }
-    var size = nodeSize / this._options.height;
+
+    const size = nodeSize / this._options.height;
     y = Math.floor(y / size);
 
     if (mod(y, 2)) {
@@ -130,6 +140,7 @@ export class HexBackend implements DisplayBackend {
     } else {
       x = 2 * Math.floor(x / (2 * this._spacingX));
     }
+    // tslint:enable:no-parameter-reassignment
 
     return [x, y];
   }
