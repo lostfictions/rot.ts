@@ -1,23 +1,22 @@
 if (typeof window !== "undefined") {
-  window.requestAnimationFrame =
-    window.requestAnimationFrame ||
-    window.mozRequestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.oRequestAnimationFrame ||
-    window.msRequestAnimationFrame ||
-    function(cb: (t: number) => void): number {
-      return setTimeout(function(): void {
-        cb(Date.now());
-      }, 1000 / 60);
-    };
+  const w = window as any;
 
-  window.cancelAnimationFrame =
-    window.cancelAnimationFrame ||
-    window.mozCancelAnimationFrame ||
-    window.webkitCancelAnimationFrame ||
-    window.oCancelAnimationFrame ||
-    window.msCancelAnimationFrame ||
-    function(id: number) {
-      return clearTimeout(id);
-    };
+  w.requestAnimationFrame =
+    w.requestAnimationFrame ||
+    w.mozRequestAnimationFrame ||
+    w.webkitRequestAnimationFrame ||
+    w.oRequestAnimationFrame ||
+    w.msRequestAnimationFrame ||
+    ((cb: (t: number) => void) =>
+      setTimeout(() => {
+        cb(Date.now());
+      }, 1000 / 60));
+
+  w.cancelAnimationFrame =
+    w.cancelAnimationFrame ||
+    w.mozCancelAnimationFrame ||
+    w.webkitCancelAnimationFrame ||
+    w.oCancelAnimationFrame ||
+    w.msCancelAnimationFrame ||
+    clearTimeout;
 }

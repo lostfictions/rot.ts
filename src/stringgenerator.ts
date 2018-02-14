@@ -20,15 +20,10 @@ export class StringGenerator {
   private readonly suffix = this.boundary;
   private readonly prefix: string[] = [];
   private priorValues: { [val: string]: number } = {};
-  private data = {};
+  private data: { [key: string]: { [ev: string]: number } } = {};
 
   constructor(options?: Partial<StringGeneratorOptions>) {
-    this.options = {
-      words: false,
-      order: 3,
-      prior: 0.001,
-      ...options
-    };
+    this.options = { words: false, order: 3, prior: 0.001, ...options };
 
     for (let i = 0; i < this.options.order; i++) {
       this.prefix.push(this.boundary);
@@ -70,34 +65,28 @@ export class StringGenerator {
       .concat(tokens)
       .concat(this.suffix); /* add boundary symbols */
 
-    for (var i = this.options.order; i < tokens.length; i++) {
-      var context = tokens.slice(i - this.options.order, i);
-      var event = tokens[i];
-      for (var j = 0; j < context.length; j++) {
-        var subcontext = context.slice(j);
+    for (let i = this.options.order; i < tokens.length; i++) {
+      const context = tokens.slice(i - this.options.order, i);
+      const event = tokens[i];
+      for (let j = 0; j < context.length; j++) {
+        const subcontext = context.slice(j);
         this.observeEvent(subcontext, event);
       }
     }
   }
 
   getStats(): string {
-    var parts = [];
+    const parts = [];
 
-    var priorCount = 0;
-    for (var p in this.priorValues) {
-      priorCount++;
-    }
-    priorCount--; /* boundary */
+    const priorCount = Object.keys(this.priorValues).length - 1;
     parts.push("distinct samples: " + priorCount);
 
-    var dataCount = 0;
-    var eventCount = 0;
-    for (var p in this.data) {
-      dataCount++;
-      for (var key in this.data[p]) {
-        eventCount++;
-      }
-    }
+    const dataCount = Object.keys(this.data).length;
+    const eventCount = Object.values(this.data).reduce<number>(
+      (p, c) => p + Object.keys(c).length,
+      0
+    );
+
     parts.push("dictionary size (contexts): " + dataCount);
     parts.push("dictionary size (events): " + eventCount);
 
@@ -113,11 +102,11 @@ export class StringGenerator {
   }
 
   private observeEvent(context: string[], event: string): void {
-    var key = this.join(context);
+    const key = this.join(context);
     if (!(key in this.data)) {
       this.data[key] = {};
     }
-    var data = this.data[key];
+    const data = this.data[key];
 
     if (!(event in data)) {
       data[event] = 0;
@@ -126,18 +115,21 @@ export class StringGenerator {
   }
 
   private sample(context: string[]): string {
-    context = this.backoff(context);
-    var key = this.join(context);
-    var data = this.data[key];
+    const backedoff = this.backoff(context);
+    const key = this.join(backedoff);
+    const data = this.data[key];
 
-    const available = {};
+    let available: { [ev: string]: number };
 
     if (this.options.prior) {
-      for (var event in this.priorValues) {
-        available[event] = this.priorValues[event];
+      available = {};
+
+      for (const [ev, value] of Object.entries(this.priorValues)) {
+        available[ev] = value;
       }
-      for (var event in data) {
-        available[event] += data[event];
+
+      for (const [ev, value] of Object.entries(data)) {
+        available[ev] += value;
       }
     } else {
       available = data;
@@ -147,18 +139,19 @@ export class StringGenerator {
   }
 
   private backoff(context: string[]): string[] {
+    let result: string[] = context;
     if (context.length > this.options.order) {
-      context = context.slice(-this.options.order);
+      result = context.slice(-this.options.order);
     } else if (context.length < this.options.order) {
-      context = this.prefix
+      result = this.prefix
         .slice(0, this.options.order - context.length)
         .concat(context);
     }
 
-    while (!(this.join(context) in this.data) && context.length > 0) {
-      context = context.slice(1);
+    while (!(this.join(result) in this.data) && result.length > 0) {
+      result = result.slice(1);
     }
 
-    return context;
+    return result;
   }
 }
