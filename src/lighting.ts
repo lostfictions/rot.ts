@@ -1,4 +1,5 @@
 import { FOV } from "./fov/fov";
+import { Color } from "./color";
 
 export interface LightingOptions {
   /**
@@ -24,7 +25,11 @@ export interface LightingOptions {
  */
 export type ReflectivityCallback = (x: number, y: number) => number;
 
-export type LightingCallback = (x: number, y: number, color) => void;
+export type LightingCallback = (
+  x: number,
+  y: number,
+  color: [number, number, number]
+) => void;
 
 interface LightingMap {
   [position: string]: [number, number, number];
@@ -41,7 +46,7 @@ export class Lighting {
 
   private _lights: LightingMap = {};
   private _reflectivityCache: { [pos: string]: number } = {};
-  private _fovCache = {};
+  private _fovCache: { [pos: string]: { [pos: string]: number } } = {};
 
   /**
    * @param reflectivityCallback Callback to retrieve cell reflectivity (0..1)
@@ -63,10 +68,7 @@ export class Lighting {
    * Adjust options at runtime
    */
   setOptions(options: Partial<LightingOptions>): this {
-    this._options = {
-      ...this._options,
-      ...options
-    };
+    this._options = { ...this._options, ...options };
     if (options.range) {
       this.reset();
     }
@@ -84,18 +86,26 @@ export class Lighting {
 
   /**
    * Set (or remove) a light source
-   * @param {null || string || number[3]} color
    */
-  setLight(x: number, y: number, color?: string | [number, number, number]) {
-    const key = x + "," + y;
+  setLight(
+    x: number,
+    y: number,
+    color?: string | [number, number, number]
+  ): void {
+    const key = `${x},${y}`;
 
     if (color) {
-      this._lights[key] =
-        typeof color === "string" ? ROT.Color.fromString(color) : color;
+      let col: [number, number, number];
+      if (Array.isArray(color)) {
+        col = color;
+      } else {
+        const c = Color.fromString(color);
+        col = [c.r, c.g, c.b];
+      }
+      this._lights[key] = col;
     } else {
       delete this._lights[key];
     }
-    return this;
   }
 
   /**
@@ -124,8 +134,7 @@ export class Lighting {
 
     for (const [pos, light] of Object.entries(this._lights)) {
       /* prepare emitters for first pass */
-      emittingCells[pos] = [0, 0, 0];
-      ROT.Color.add_(emittingCells[pos], light);
+      emittingCells[pos] = light;
     }
 
     const doneCells = new Set<string>();
@@ -133,7 +142,7 @@ export class Lighting {
     for (let i = 0; i < this._options.passes; i++) {
       /* main loop */
       this._emitLight(emittingCells, litCells, doneCells);
-      if (i + 1 == this._options.passes) {
+      if (i + 1 === this._options.passes) {
         continue;
       } /* not for the last pass */
       emittingCells = this._computeEmitters(litCells, doneCells);
@@ -159,11 +168,9 @@ export class Lighting {
     litCells: LightingMap,
     doneCells: Set<string>
   ): void {
-    for (var key in emittingCells) {
-      var parts = key.split(",");
-      var x = parseInt(parts[0]);
-      var y = parseInt(parts[1]);
-      this._emitLightFromCell(x, y, emittingCells[key], litCells);
+    for (const [key, value] of Object.entries(emittingCells)) {
+      const [x, y] = key.split(",").map(parseInt);
+      this._emitLightFromCell(x, y, value, litCells);
       doneCells.add(key);
     }
   }
@@ -200,7 +207,7 @@ export class Lighting {
       /* compute emission color */
       const emission = [];
       let intensity = 0;
-      for (var i = 0; i < 3; i++) {
+      for (let i = 0; i < 3; i++) {
         const part = Math.round(color[i] * reflectivity);
         emission[i] = part;
         intensity += part;
@@ -226,48 +233,53 @@ export class Lighting {
     color: [number, number, number],
     litCells: LightingMap
   ): void {
-    const key = x + "," + y;
+    const key = `${x},${y}`;
+
+    let fov: { [pos: string]: number };
     if (key in this._fovCache) {
-      var fov = this._fovCache[key];
+      fov = this._fovCache[key];
     } else {
-      var fov = this._updateFOV(x, y);
+      fov = this._updateFOV(x, y);
     }
 
-    for (var fovKey in fov) {
-      var formFactor = fov[fovKey];
-
-      if (fovKey in litCells) {
+    for (const [pos, formFactor] of Object.entries(fov)) {
+      let result: [number, number, number];
+      if (pos in litCells) {
         /* already lit */
-        var result = litCells[fovKey];
+        result = litCells[pos];
       } else {
         /* newly lit */
-        var result = [0, 0, 0];
-        litCells[fovKey] = result;
+        result = [0, 0, 0];
+        litCells[pos] = result;
       }
 
-      for (var i = 0; i < 3; i++) {
+      for (let i = 0; i < 3; i++) {
+        /* add light color */
         result[i] += Math.round(color[i] * formFactor);
-      } /* add light color */
+      }
     }
   }
 
   /**
    * Compute FOV ("form factor") for a potential light source at [x,y]
    */
-  private _updateFOV(x: number, y: number) {
-    var key1 = x + "," + y;
-    var cache = {};
+  private _updateFOV(x: number, y: number): { [pos: string]: number } {
+    const key1 = `${x},${y}`;
+    const cache: { [pos: string]: number } = {};
     this._fovCache[key1] = cache;
-    var range = this._options.range;
-    var cb = function(x, y, r, vis) {
-      var key2 = x + "," + y;
-      var formFactor = vis * (1 - r / range);
-      if (formFactor == 0) {
+
+    const range = this._options.range;
+
+    const cb = (xx: number, yy: number, r: number, vis: number) => {
+      const key2 = `${xx},${yy}`;
+      const formFactor = vis * (1 - r / range);
+      if (formFactor === 0) {
         return;
       }
       cache[key2] = formFactor;
     };
-    this._fov.compute(x, y, range, cb.bind(this));
+
+    this._fov!.compute(x, y, range, cb);
 
     return cache;
   }
