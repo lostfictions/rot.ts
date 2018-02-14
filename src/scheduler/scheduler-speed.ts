@@ -7,7 +7,9 @@ export interface SpeedActor {
 /**
  * Speed-based scheduler
  */
-export class SpeedScheduler<T extends SpeedActor> extends Scheduler<T> {
+export class SpeedScheduler<
+  T extends SpeedActor = SpeedActor
+> extends Scheduler<T> {
   add(item: T, repeat: boolean, time?: number): this {
     this._queue.add(item, time !== undefined ? time : 1 / item.getSpeed());
     return super.add(item, repeat);
